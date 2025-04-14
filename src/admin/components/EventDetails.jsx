@@ -151,12 +151,19 @@ const EventDetails = () => {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(`${API_URL}/events/${eventId}`);
+        console.log("res is ", res.data.event);
+        if (!res.data.event) {
+          setError("Event not found.");
+          return;
+        }
         setEvent(res.data.event);
         setEditValues(res.data.event);
 
         const favRes = await axios.get(
-          `{API_URL}/users/favorites/check/${eventId}`,
-          { withCredentials: true }
+          `${API_URL}/users/favorites/check/${eventId}`,
+          {
+            withCredentials: true,
+          }
         );
         setIsFavorite(favRes.data.isFavorite);
       } catch {
