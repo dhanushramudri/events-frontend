@@ -25,6 +25,7 @@ import {
 } from "../components/ui/select";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
+import { API_URL } from "../config/constants";
 
 const Events = () => {
   const [allEvents, setAllEvents] = useState([]); // Store all events from initial fetch
@@ -47,7 +48,7 @@ const Events = () => {
   const fetchAllEvents = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/events");
+      const response = await axios.get(`${API_URL}/events`);
       const events = response.data.events || [];
       setAllEvents(events);
       setFilteredEvents(events); // Initially show all events

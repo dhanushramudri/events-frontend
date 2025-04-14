@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { API_URL } from "../config/constants";
 
 const Login = ({ onSwitch }) => {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const Login = ({ onSwitch }) => {
     const token = localStorage.getItem("token"); // Retrieve token
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${API_URL}auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

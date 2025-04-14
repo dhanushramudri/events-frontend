@@ -13,6 +13,7 @@ import {
   Loader,
   AlertCircle,
 } from "lucide-react";
+import { API_URL } from "../config/constants";
 
 const Analytics = () => {
   const [stats, setStats] = useState(null);
@@ -23,9 +24,7 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          "http://localhost:5000/api/analytics/admin"
-        );
+        const res = await axios.get(`${API_URL}/analytics/admin`);
         setStats(res.data);
       } catch (err) {
         console.error("Error fetching analytics:", err);

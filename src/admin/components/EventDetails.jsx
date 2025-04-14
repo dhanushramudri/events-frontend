@@ -23,6 +23,7 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { formatDateTime } from "../utils/cn";
+import { API_URL } from "../config/constants";
 
 const EditableTextField = ({
   label,
@@ -149,14 +150,12 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/events/${eventId}`
-        );
+        const res = await axios.get(`${API_URL}/events/${eventId}`);
         setEvent(res.data.event);
         setEditValues(res.data.event);
 
         const favRes = await axios.get(
-          `http://localhost:5000/api/users/favorites/check/${eventId}`,
+          `{API_URL}/users/favorites/check/${eventId}`,
           { withCredentials: true }
         );
         setIsFavorite(favRes.data.isFavorite);
@@ -172,8 +171,8 @@ const EventDetails = () => {
   const toggleFavorite = async () => {
     try {
       const endpoint = isFavorite
-        ? `http://localhost:5000/api/users/favorites/remove/${eventId}`
-        : `http://localhost:5000/api/users/favorites/add/${eventId}`;
+        ? `${API_URL}/users/favorites/remove/${eventId}`
+        : `${API_URL}/users/favorites/add/${eventId}`;
 
       await axios.post(endpoint, {}, { withCredentials: true });
       setIsFavorite(!isFavorite);
@@ -205,15 +204,11 @@ const EventDetails = () => {
         payload.image = res.data.secure_url;
       }
 
-      await axios.put(
-        `http://localhost:5000/api/events/admin/events/${eventId}`,
-        payload,
-        { withCredentials: true }
-      );
+      await axios.put(`${API_URL}/events/admin/events/${eventId}`, payload, {
+        withCredentials: true,
+      });
 
-      const updated = await axios.get(
-        `http://localhost:5000/api/events/${eventId}`
-      );
+      const updated = await axios.get(`${API_URL}events/${eventId}`);
       setEvent(updated.data.event);
       setEditValues(updated.data.event);
       toggleEdit(field);

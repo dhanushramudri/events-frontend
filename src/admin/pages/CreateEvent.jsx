@@ -13,6 +13,7 @@ import {
   SelectItem,
 } from "../components/ui/select";
 import { toast } from "react-toastify";
+import { API_URL } from "../config/constants";
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -40,46 +41,67 @@ const CreateEvent = () => {
     });
   };
 
+  // Upload image to Cloudinary and return the image URL
   const handleImageUpload = async () => {
     if (!imageFile) return "";
+
     const formData = new FormData();
     formData.append("file", imageFile);
-    formData.append("upload_preset", "your_preset_name"); // Replace with your Cloudinary preset
+    formData.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
 
     try {
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/your_cloud_name/image/upload", // Replace with your Cloudinary info
-        formData
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
       );
-      return res.data.secure_url;
-    } catch (error) {
+      console.log("Cloudinary response:", res);
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Cloudinary error response:", errorData);
+        throw new Error("Cloudinary upload failed");
+      }
+
+      const data = await res.json();
+      console.log("Image uploaded:", data.secure_url);
+      return data.secure_url;
+    } catch (err) {
+      console.error("Image upload failed:", err);
       toast.error("Image upload failed");
       return "";
     }
   };
 
+  // Handle the form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Upload the image first
       const imageUrl = await handleImageUpload();
+      console.log("Image URL:", imageUrl);
 
       const payload = {
         ...eventData,
-        image: imageUrl,
+        image: imageUrl, // attach the uploaded image URL to the payload
       };
 
-      await axios.post(
-        "http://localhost:5000/api/events/admin/events",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          withCredentials: true,
-        }
-      );
+      // Send the event creation request
+      await axios.post(`${API_URL}/events/admin/events`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        withCredentials: true,
+      });
 
       toast.success("Event created successfully!");
       navigate("/events");

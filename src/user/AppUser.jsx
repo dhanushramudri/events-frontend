@@ -90,15 +90,12 @@ const AppUser = () => {
       setEvents(response.data.events || []);
 
       // Fetch user's favorites in a separate call
-      const favoritesResponse = await axios.get(
-        "http://localhost:5000/api/events/favorites",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const favoritesResponse = await axios.get(`${API_URL}/events/favorites`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        withCredentials: true,
+      });
       setFavorites(favoritesResponse.data.favorites || []);
     } catch (err) {
       setError("Failed to load events. Please try again later.");
@@ -115,7 +112,7 @@ const AppUser = () => {
   const handleRegister = async (eventId) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/events/${eventId}/register`,
+        `${API_URL}/events/${eventId}/register`,
         {},
         { withCredentials: true }
       );
@@ -130,7 +127,7 @@ const AppUser = () => {
   const handleJoinWaitlist = async (eventId) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/events/${eventId}/waitlist`,
+        `${API_URL}/events/${eventId}/waitlist`,
         {},
         { withCredentials: true }
       );
@@ -149,8 +146,8 @@ const AppUser = () => {
     try {
       const isFavorite = favorites.includes(eventId);
       const endpoint = isFavorite
-        ? `http://localhost:5000/api/users/favorites/remove/${eventId}`
-        : `http://localhost:5000/api/users/favorites/add/${eventId}`;
+        ? `${API_URL}/users/favorites/remove/${eventId}`
+        : `${API_URL}/api/users/favorites/add/${eventId}`;
 
       await axios.post(endpoint, {}, { withCredentials: true });
 
