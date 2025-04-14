@@ -73,7 +73,7 @@ const AppUser = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      let url = "http://localhost:5000/api/events";
+      let url = "https://events-backend-coral.vercel.app/events";
 
       // Add query parameters if filters are set
       const params = new URLSearchParams();

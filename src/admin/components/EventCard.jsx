@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import axios from "axios";
+import { API_URL } from "../config/constants";
 
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -23,7 +24,7 @@ const EventCard = ({ event }) => {
     const checkFavoriteStatus = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/users/favorites/check/${event._id}`,
+          `${API_URL}/users/favorites/check/${event._id}`,
           { withCredentials: true }
         );
         setIsFavorite(response.data.isFavorite);
@@ -41,8 +42,8 @@ const EventCard = ({ event }) => {
 
     try {
       const endpoint = isFavorite
-        ? `http://localhost:5000/api/users/favorites/remove/${event._id}`
-        : `http://localhost:5000/api/users/favorites/add/${event._id}`;
+        ? `${API_URL}users/favorites/remove/${event._id}`
+        : `${API_URL}/users/favorites/add/${event._id}`;
 
       await axios.post(endpoint, {}, { withCredentials: true });
       setIsFavorite(!isFavorite);
