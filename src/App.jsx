@@ -10,7 +10,7 @@ import AuthForm from "./admin/pages/AuthForm";
 
 const App = () => {
   const role = localStorage.getItem("role");
-  console.log("role", role);
+  console.log("role is ", role);
 
   return (
     <Routes>

@@ -30,6 +30,7 @@ import { Badge } from "../admin/components/ui/badge";
 import { Input } from "../admin/components/ui/input";
 import { Progress } from "../admin/components/ui/progress";
 import { formatDateTime } from "../admin/utils/cn";
+import { API_URL } from "../admin/config/constants";
 
 // Simple Progress Component if you don't have the Progress component
 const SimpleProgress = ({ value, className }) => {
@@ -73,7 +74,7 @@ const AppUser = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      let url = "https://events-backend-coral.vercel.app/events";
+      let url = "https://events-backend-coral.vercel.app/api/events";
 
       // Add query parameters if filters are set
       const params = new URLSearchParams();

@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import AuthForm from "./pages/AuthForm";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
+import AppUser from "../user/AppUser";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -58,6 +59,8 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+  const role = localStorage.getItem("role"); // Check the role from localStorage
+
   return (
     <AuthProvider>
       <Routes>
@@ -73,21 +76,30 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <MainLayout />
+              {role === "admin" ? (
+                <MainLayout /> // Admin route - full access
+              ) : (
+                <AppUser /> // User route - restricted access
+              )}
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="events" element={<Events />} />
-          <Route path="events/:eventId" element={<EventDetails />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="users" element={<Users />} />
-          <Route path="events/new" element={<CreateEvent />} />
-          <Route path="favorites" element={<Favorites />} />
-          <Route
-            path="events/:eventId/participants"
-            element={<Participants />}
-          />
+          {/* Admin Routes (if role is admin) */}
+          {role === "admin" && (
+            <>
+              <Route index element={<Dashboard />} />
+              <Route path="events" element={<Events />} />
+              <Route path="events/:eventId" element={<EventDetails />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="users" element={<Users />} />
+              <Route path="events/new" element={<CreateEvent />} />
+              <Route path="favorites" element={<Favorites />} />
+              <Route
+                path="events/:eventId/participants"
+                element={<Participants />}
+              />
+            </>
+          )}
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
