@@ -16,6 +16,9 @@ import {
   X,
   Download,
   Check,
+  Search,
+  Filter,
+  Users,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { API_URL } from "../config/constants";
@@ -187,6 +190,18 @@ const Participants = () => {
     }
   };
 
+  const removeUser = async (userId) => {
+    try {
+      await axios.delete(
+        `${API_URL}/admin/events/${eventId}/participants/${userId}`
+      );
+      toast.success("User removed successfully.");
+      fetchParticipants();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to remove user.");
+    }
+  };
+
   const sendNotification = async () => {
     if (!notificationMessage.trim()) {
       toast.error("Please enter a notification message");
@@ -324,24 +339,33 @@ const Participants = () => {
       label: "Registered",
       key: "approved",
       description: "Confirmed participants",
+      color: "bg-green-600",
+      textColor: "text-white",
+      iconBg: "bg-green-700",
     },
     {
       label: "Waitlisted",
       key: "pending",
       description: "In queue for approval",
+      color: "bg-amber-500",
+      textColor: "text-white",
+      iconBg: "bg-amber-600",
     },
     {
       label: "Withdrawn",
       key: "rejected",
       description: "Removed or cancelled",
+      color: "bg-gray-500",
+      textColor: "text-white",
+      iconBg: "bg-gray-600",
     },
   ];
 
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Participants</CardTitle>
+      <Card className="w-full shadow-md">
+        <CardHeader className="bg-blue-50">
+          <CardTitle className="text-blue-800">Participants</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
@@ -351,56 +375,108 @@ const Participants = () => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-col sm:flex-row justify-between gap-4">
-        <div>
-          <CardTitle>Participants</CardTitle>
-          {event && (
-            <div>
-              <p className="text-sm text-gray-500">
-                {event.title} – {new Date(event.date).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-500">
-                Capacity: {groupedUsers.approved.length}/{event.capacity}{" "}
-                participants
-              </p>
-              <p className="text-sm text-gray-500">
-                {groupedUsers.pending.length} people on waitlist
-              </p>
+    <Card className="w-full shadow-md">
+      <CardHeader className="bg-blue-50 pb-6">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 text-white p-2 rounded-full">
+              <Users className="w-6 h-6" />
             </div>
-          )}
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={exportParticipantsList}>
-            <Download className="w-4 h-4 mr-2" /> Export CSV
-          </Button>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="border px-3 py-2 rounded-md"
-          />
+            <div>
+              <CardTitle className="text-blue-800">
+                Event Participants
+              </CardTitle>
+              {event && (
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">
+                    {event.title} – {new Date(event.date).toLocaleDateString()}
+                  </p>
+                  <div className="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold text-blue-700">
+                        {groupedUsers.approved.length}/{event.capacity}
+                      </span>{" "}
+                      registered
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold text-amber-600">
+                        {groupedUsers.pending.length}
+                      </span>{" "}
+                      on waitlist
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+            <div className="relative w-full sm:w-auto">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search participants..."
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="border px-3 py-2 pl-9 rounded-md w-full"
+              />
+            </div>
+            <Button
+              variant="outline"
+              onClick={exportParticipantsList}
+              className="bg-white hover:bg-gray-50 border-gray-300"
+            >
+              <Download className="w-4 h-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-8 p-4 sm:p-6">
         {/* Notification Section */}
-        <div className="border p-4 rounded-lg bg-gray-50">
-          <h3 className="text-lg font-semibold mb-3">Send Notification</h3>
+        <div className="border p-4 rounded-lg bg-blue-50 border-blue-200 shadow-sm">
+          <h3 className="text-lg font-semibold mb-3 text-blue-800 flex items-center">
+            <Mail className="w-5 h-5 mr-2" />
+            Send Notification
+          </h3>
           <div className="flex flex-wrap gap-2 mb-3">
-            {["selected", "all", "status"].map((opt) => (
-              <Button
-                key={opt}
-                variant={notificationTarget === opt ? "default" : "outline"}
-                onClick={() => setNotificationTarget(opt)}
-              >
-                {opt.charAt(0).toUpperCase() + opt.slice(1)}
-              </Button>
-            ))}
+            <Button
+              variant={
+                notificationTarget === "selected" ? "default" : "outline"
+              }
+              onClick={() => setNotificationTarget("selected")}
+              className={
+                notificationTarget === "selected"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : ""
+              }
+            >
+              Selected
+            </Button>
+            <Button
+              variant={notificationTarget === "status" ? "default" : "outline"}
+              onClick={() => setNotificationTarget("status")}
+              className={
+                notificationTarget === "status"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : ""
+              }
+            >
+              By Status
+            </Button>
+            <Button
+              variant={notificationTarget === "all" ? "default" : "outline"}
+              onClick={() => setNotificationTarget("all")}
+              className={
+                notificationTarget === "all"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : ""
+              }
+            >
+              All
+            </Button>
             {notificationTarget === "status" && (
               <select
-                className="border px-3 py-2 rounded-md"
+                className="border px-3 py-2 rounded-md bg-white"
                 value={targetStatus}
                 onChange={(e) => setTargetStatus(e.target.value)}
               >
@@ -411,94 +487,126 @@ const Participants = () => {
             )}
           </div>
           <textarea
-            className="w-full p-2 border rounded-md"
+            className="w-full p-3 border rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             rows="4"
             placeholder="Enter notification message..."
             value={notificationMessage}
             onChange={(e) => setNotificationMessage(e.target.value)}
           />
-          <div className="mt-2 flex justify-end">
-            <Button onClick={sendNotification} disabled={sendingNotification}>
+          <div className="mt-3 flex justify-end">
+            <Button
+              onClick={sendNotification}
+              disabled={sendingNotification}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               {sendingNotification ? "Sending..." : "Send Notification"}
             </Button>
           </div>
         </div>
 
         {/* Participants List */}
-        {sections.map(({ key, label, description }) => (
-          <div key={key}>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold text-lg">{label}</h3>
-              <p className="text-sm text-gray-500">{description}</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              {filterParticipants(groupedUsers[key]).length > 0 ? (
-                filterParticipants(groupedUsers[key]).map((user) => (
-                  <div
-                    key={user._id}
-                    className="flex justify-between items-center border-b pb-2"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes(user._id)}
-                        onChange={() => toggleSelectUser(user._id)}
-                      />
-                      <div>
-                        <span>{user.name}</span>
-                        <div className="text-sm text-gray-500">
-                          {user.email}
-                        </div>
-                        {key === "pending" && (
-                          <div className="text-xs text-gray-400">
-                            Queue position: {user.queuePosition || "N/A"}
+        {sections.map(
+          ({ key, label, description, color, textColor, iconBg }) => (
+            <div
+              key={key}
+              className="border rounded-lg shadow-sm overflow-hidden"
+            >
+              <div
+                className={`${color} ${textColor} p-3 flex justify-between items-center`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`${iconBg} rounded-full p-1`}>
+                    <Filter className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-bold text-lg">{label}</h3>
+                </div>
+                <p className="text-sm">{description}</p>
+              </div>
+              <div className="bg-white p-4 space-y-3">
+                {filterParticipants(groupedUsers[key]).length > 0 ? (
+                  filterParticipants(groupedUsers[key]).map((user) => (
+                    <div
+                      key={user._id}
+                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-3"
+                    >
+                      <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user._id)}
+                          onChange={() => toggleSelectUser(user._id)}
+                          className="h-4 w-4"
+                        />
+                        <div>
+                          <span className="font-medium">{user.name}</span>
+                          <div className="text-sm text-gray-500">
+                            {user.email}
                           </div>
-                        )}
+                          {key === "pending" && (
+                            <div className="text-xs text-gray-400">
+                              Queue position: {user.queuePosition || "N/A"}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <span
+                          className={`${getStatusBadgeColor(
+                            user.status
+                          )} text-xs px-2 py-1 rounded-full font-medium`}
+                        >
+                          {user.status}
+                        </span>
+                        <div className="flex border-l pl-2 ml-2">
+                          <button
+                            onClick={() => promoteUser(user._id)}
+                            title="Approve"
+                            className="p-1 hover:bg-green-100 rounded"
+                          >
+                            <Check className="text-green-600 w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => rejectUser(user._id)}
+                            title="Reject"
+                            className="p-1 hover:bg-red-100 rounded"
+                          >
+                            <X className="text-red-600 w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => removeUser(user._id)}
+                            title="Remove"
+                            className="p-1 hover:bg-red-100 rounded"
+                          >
+                            <Trash className="text-red-600 w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => sendDirectEmailToUser(user)}
+                            title="Email"
+                            className="p-1 hover:bg-blue-100 rounded"
+                          >
+                            <Mail className="text-blue-600 w-5 h-5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={getStatusColor(user.status)}>
-                        {user.status}
-                      </span>
-                      <button
-                        onClick={() => promoteUser(user._id)}
-                        title="Approve"
-                      >
-                        <Check className="text-green-500 w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => rejectUser(user._id)}
-                        title="Reject"
-                      >
-                        <X className="text-red-500 w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => removeUser(user._id)}
-                        title="Remove"
-                      >
-                        <Trash className="text-red-500 w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => sendDirectEmailToUser(user)}
-                        title="Email"
-                      >
-                        <Mail className="text-blue-500 w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No users in this category</p>
-              )}
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">
+                    No users in this category
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </CardContent>
 
-      <CardFooter>
-        <Link to={`/admin/events/${eventId}/details`}>
-          <Button variant="outline">
-            <ArrowRightCircle className="w-4 h-4 mr-2" />
+      <CardFooter className="bg-gray-50 p-4 border-t">
+        <Link to="/events">
+          <Button
+            variant="outline"
+            className="hover:bg-blue-50 border-blue-300"
+          >
+            <ArrowRightCircle className="w-4 h-4 mr-2 text-blue-600" />
             Back to Event Details
           </Button>
         </Link>
@@ -510,13 +618,26 @@ const Participants = () => {
 const getStatusColor = (status) => {
   switch (status) {
     case "approved":
-      return "text-green-500";
+      return "text-green-600 font-medium";
     case "pending":
-      return "text-yellow-500";
+      return "text-amber-600 font-medium";
     case "rejected":
-      return "text-gray-500";
+      return "text-gray-500 font-medium";
     default:
       return "text-gray-400";
+  }
+};
+
+const getStatusBadgeColor = (status) => {
+  switch (status) {
+    case "approved":
+      return "bg-green-100 text-green-800";
+    case "pending":
+      return "bg-amber-100 text-amber-800";
+    case "rejected":
+      return "bg-gray-100 text-gray-800";
+    default:
+      return "bg-gray-100 text-gray-600";
   }
 };
 

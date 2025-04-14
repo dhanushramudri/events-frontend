@@ -14,14 +14,18 @@ import {
   Upload,
   Save,
   X,
+  Info,
 } from "lucide-react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
 import { formatDateTime } from "../utils/cn";
 import { API_URL } from "../config/constants";
 
@@ -36,30 +40,47 @@ const EditableTextField = ({
   onSave,
   onToggle,
 }) => (
-  <div className="flex items-center gap-2 text-sm w-full">
-    {icon}
+  <div className="flex items-center gap-3 text-sm w-full group p-2 rounded-md hover:bg-gray-50 transition-colors">
+    <div className="text-primary">{icon}</div>
     {editMode ? (
-      <>
+      <div className="flex items-center gap-2 w-full">
         <input
           type={type}
           value={value || ""}
           onChange={(e) => onChange(field, e.target.value)}
-          className="border rounded px-2 py-1 text-sm w-full"
+          className="border rounded-md px-3 py-2 text-sm w-full focus:ring-2 focus:ring-primary focus:outline-none"
+          autoFocus
         />
-        <Button size="sm" onClick={() => onSave(field)}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onSave(field)}
+          className="flex items-center gap-1"
+        >
           <Save className="w-4 h-4" />
+          <span className="hidden sm:inline">Save</span>
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => onToggle(field)}>
-          <X className="w-4 h-4" />
-        </Button>
-      </>
-    ) : (
-      <div className="flex justify-between w-full">
-        <span>{label}</span>
-        <Pencil
-          className="w-4 h-4 text-muted-foreground cursor-pointer"
+        <Button
+          size="sm"
+          variant="ghost"
           onClick={() => onToggle(field)}
-        />
+          className="flex items-center gap-1"
+        >
+          <X className="w-4 h-4" />
+          <span className="hidden sm:inline">Cancel</span>
+        </Button>
+      </div>
+    ) : (
+      <div className="flex justify-between w-full items-center">
+        <span className="text-base">{label}</span>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={() => onToggle(field)}
+        >
+          <Pencil className="w-4 h-4" />
+        </Button>
       </div>
     )}
   </div>
@@ -74,33 +95,57 @@ const EditableSelect = ({
   onSave,
   onToggle,
 }) => (
-  <div className="flex items-center gap-2 text-sm w-full">
-    <span>Auto-Approve:</span>
+  <div className="flex items-center gap-3 text-sm w-full group p-2 rounded-md hover:bg-gray-50 transition-colors">
+    <div className="text-primary">
+      <Info className="w-4 h-4" />
+    </div>
     {editMode ? (
-      <>
+      <div className="flex items-center gap-2 w-full">
+        <span className="text-base font-medium">Auto-Approve:</span>
         <select
           value={value}
           onChange={(e) => onChange(field, e.target.value === "true")}
-          className="border px-2 py-1 rounded"
+          className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-primary focus:outline-none"
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
-        <Button size="sm" onClick={() => onSave(field)}>
-          Save
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onSave(field)}
+          className="flex items-center gap-1"
+        >
+          <Save className="w-4 h-4" />
+          <span className="hidden sm:inline">Save</span>
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => onToggle(field)}>
-          Cancel
-        </Button>
-      </>
-    ) : (
-      <>
-        <span>{value ? "Yes" : "No"}</span>
-        <Pencil
-          className="w-4 h-4 cursor-pointer"
+        <Button
+          size="sm"
+          variant="ghost"
           onClick={() => onToggle(field)}
-        />
-      </>
+          className="flex items-center gap-1"
+        >
+          <X className="w-4 h-4" />
+          <span className="hidden sm:inline">Cancel</span>
+        </Button>
+      </div>
+    ) : (
+      <div className="flex justify-between w-full items-center">
+        <div className="flex items-center gap-2">
+          <span className="text-base font-medium">Auto-Approve:</span>
+          <Badge variant={value ? "success" : "secondary"}>
+            {value ? "Yes" : "No"}
+          </Badge>
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={() => onToggle(field)}
+        >
+          <Pencil className="w-4 h-4" />
+        </Button>
+      </div>
     )}
   </div>
 );
@@ -112,27 +157,36 @@ const EditableImageUpload = ({
   onSave,
   onToggle,
 }) => (
-  <div className="absolute bottom-2 right-4">
+  <div className="absolute bottom-4 right-4">
     {editMode ? (
-      <div className="flex items-center gap-2">
+      <div className="bg-white p-2 rounded-lg shadow-lg flex items-center gap-2">
         <input
           type="file"
           accept="image/*"
           onChange={(e) => onChange(e.target.files[0])}
-          className="text-xs"
+          className="text-xs max-w-40"
         />
-        <Button size="sm" onClick={onSave}>
-          Save
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onSave}
+          className="whitespace-nowrap"
+        >
+          <Save className="w-4 h-4 mr-1" /> Save
         </Button>
         <Button size="sm" variant="ghost" onClick={onToggle}>
-          Cancel
+          <X className="w-4 h-4" />
         </Button>
       </div>
     ) : (
-      <Upload
-        className="w-5 h-5 cursor-pointer text-white"
+      <Button
+        size="sm"
+        variant="outline"
+        className="bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
         onClick={onToggle}
-      />
+      >
+        <Upload className="w-4 h-4 mr-1" /> Change Image
+      </Button>
     )}
   </div>
 );
@@ -228,26 +282,47 @@ const EventDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading event details...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+    return (
+      <div className="max-w-3xl mx-auto mt-10">
+        <Card className="border-red-200">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <div className="rounded-full bg-red-100 p-3 mb-4">
+              <X className="h-6 w-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-medium text-red-600">
+              Unable to load event
+            </h3>
+            <p className="text-muted-foreground text-center mt-2">{error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <Card>
+    <div className="max-w-4xl mx-auto space-y-6 p-4">
+      <Card className="overflow-hidden border-none shadow-lg">
         <div className="relative">
           <img
             src={newImage ? URL.createObjectURL(newImage) : event.image}
             alt="Event"
-            className="w-full h-60 object-cover rounded-t-md"
+            className="w-full h-72 sm:h-80 object-cover"
           />
-          <button
-            className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md"
+          <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/40"></div>
+
+          <Button
+            className="absolute top-4 right-4 bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg"
+            variant="ghost"
+            size="icon"
             onClick={toggleFavorite}
           >
             <Heart
@@ -255,7 +330,7 @@ const EventDetails = () => {
                 isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"
               }`}
             />
-          </button>
+          </Button>
 
           <EditableImageUpload
             imageUrl={event.image}
@@ -266,94 +341,125 @@ const EventDetails = () => {
           />
         </div>
 
-        <CardHeader>
-          <CardTitle className="text-2xl">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <Badge variant="outline" className="mb-2 text-xs">
+                {event.category}
+              </Badge>
+              <CardTitle className="text-3xl font-bold">
+                <EditableTextField
+                  label={event.title}
+                  field="title"
+                  icon={null}
+                  value={editValues.title}
+                  editMode={editMode.title}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+              </CardTitle>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <div className="text-lg text-muted-foreground mb-4">
             <EditableTextField
-              label={event.title}
-              field="title"
+              label={event.description}
+              field="description"
               icon={null}
-              value={editValues.title}
-              editMode={editMode.title}
+              value={editValues.description}
+              editMode={editMode.description}
               onChange={handleFieldChange}
               onSave={saveField}
               onToggle={toggleEdit}
             />
-          </CardTitle>
-        </CardHeader>
+          </div>
 
-        <CardContent className="space-y-4">
-          <EditableTextField
-            label={event.description}
-            field="description"
-            icon={null}
-            value={editValues.description}
-            editMode={editMode.description}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableTextField
-            label={formatDateTime(event.date)}
-            field="date"
-            icon={<Calendar className="w-4 h-4" />}
-            type="datetime-local"
-            value={editValues.date}
-            editMode={editMode.date}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableTextField
-            label={event.location}
-            field="location"
-            icon={<MapPin className="w-4 h-4" />}
-            value={editValues.location}
-            editMode={editMode.location}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableTextField
-            label={event.category}
-            field="category"
-            icon={<Tag className="w-4 h-4" />}
-            value={editValues.category}
-            editMode={editMode.category}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableTextField
-            label={event.capacity}
-            field="capacity"
-            icon={<Users className="w-4 h-4" />}
-            type="number"
-            value={editValues.capacity}
-            editMode={editMode.capacity}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableTextField
-            label={formatDateTime(event.registrationClosesAt)}
-            field="registrationClosesAt"
-            icon={<Clock className="w-4 h-4" />}
-            type="datetime-local"
-            value={editValues.registrationClosesAt}
-            editMode={editMode.registrationClosesAt}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
-          <EditableSelect
-            label="Auto-Approve"
-            field="autoApprove"
-            value={editValues.autoApprove}
-            editMode={editMode.autoApprove}
-            onChange={handleFieldChange}
-            onSave={saveField}
-            onToggle={toggleEdit}
-          />
+          <Separator className="my-6" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="border shadow-sm">
+              <CardHeader className="py-3">
+                <CardTitle className="text-base">Event Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1 pt-0">
+                <EditableTextField
+                  label={formatDateTime(event.date)}
+                  field="date"
+                  icon={<Calendar className="w-4 h-4" />}
+                  type="datetime-local"
+                  value={editValues.date}
+                  editMode={editMode.date}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+                <EditableTextField
+                  label={event.location}
+                  field="location"
+                  icon={<MapPin className="w-4 h-4" />}
+                  value={editValues.location}
+                  editMode={editMode.location}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+                <EditableTextField
+                  label={event.category}
+                  field="category"
+                  icon={<Tag className="w-4 h-4" />}
+                  value={editValues.category}
+                  editMode={editMode.category}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="border shadow-sm">
+              <CardHeader className="py-3">
+                <CardTitle className="text-base">Registration Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1 pt-0">
+                <EditableTextField
+                  label={`${event.capacity} participants`}
+                  field="capacity"
+                  icon={<Users className="w-4 h-4" />}
+                  type="number"
+                  value={editValues.capacity}
+                  editMode={editMode.capacity}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+                <EditableTextField
+                  label={`Registration closes: ${formatDateTime(
+                    event.registrationClosesAt
+                  )}`}
+                  field="registrationClosesAt"
+                  icon={<Clock className="w-4 h-4" />}
+                  type="datetime-local"
+                  value={editValues.registrationClosesAt}
+                  editMode={editMode.registrationClosesAt}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+                <EditableSelect
+                  label="Auto-Approve"
+                  field="autoApprove"
+                  value={editValues.autoApprove}
+                  editMode={editMode.autoApprove}
+                  onChange={handleFieldChange}
+                  onSave={saveField}
+                  onToggle={toggleEdit}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </CardContent>
       </Card>
     </div>
