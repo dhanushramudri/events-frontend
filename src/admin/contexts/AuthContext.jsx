@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "../config/constants";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const Navigate = useNavigate(); // Assuming you're using react-router-dom
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -33,6 +35,11 @@ export const AuthProvider = ({ children }) => {
 
         if (response.data && response.data.user) {
           console.log("User authenticated ✅:", response.data.user);
+          if (response.data.user) {
+            console.log("navigating to / page");
+            Navigate("/");
+            console.log("navigated");
+          }
           setCurrentUser(response.data.user);
           setIsAuthenticated(true);
         }

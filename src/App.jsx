@@ -7,11 +7,11 @@ import {
 import AppAdmin from "./admin/AppAdmin";
 import AppUser from "./user/AppUser";
 import AuthForm from "./admin/pages/AuthForm";
+import { AuthProvider, useAuth } from "./admin/contexts/AuthContext";
 
 const App = () => {
   const role = localStorage.getItem("role");
   console.log("role is ", role);
-
   return (
     <Routes>
       <Route path="/login" element={<AuthForm />} />

@@ -29,7 +29,7 @@ const Login = ({ onSwitch }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include token
+          Authorization: token ? `Bearer ${token}` : "", // Include token if it exists
         },
         body: JSON.stringify(formData), // Send formData as JSON
       });
@@ -37,12 +37,28 @@ const Login = ({ onSwitch }) => {
       const result = await response.json();
       console.log("Login response:", result);
 
-      // Optional: Save token if returned and redirect user
-      if (result.token) {
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("role", result.user.role); // Save user role
+      // Check if the response indicates a successful login
+      if (response.ok) {
+        navigate("/");
+        // Store token if it exists in the response
+        if (result.token) {
+          localStorage.setItem("token", result.token);
+        }
+
+        // Store user role if available
+        if (result.user && result.user.role) {
+          localStorage.setItem("role", result.user.role);
+        }
+
+        // Log before redirect
+        console.log("Login successful, redirecting to home page");
+
         // Redirect to homepage after successful login
-        navigate("/"); // This redirects the user to the home page
+        navigate("/");
+      } else {
+        // Handle login failure
+        console.error("Login failed:", result.message || "Unknown error");
+        // You might want to show an error message to the user here
       }
     } catch (error) {
       console.error("Login error:", error);
