@@ -42,7 +42,7 @@ const EventCard = ({ event }) => {
 
     try {
       const endpoint = isFavorite
-        ? `${API_URL}users/favorites/remove/${event._id}`
+        ? `${API_URL}/users/favorites/remove/${event._id}`
         : `${API_URL}/users/favorites/add/${event._id}`;
 
       await axios.post(endpoint, {}, { withCredentials: true });
