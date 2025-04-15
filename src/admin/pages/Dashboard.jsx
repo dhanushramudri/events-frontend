@@ -24,7 +24,6 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import EventCard from "../components/EventCard";
-import { useToast } from "../hooks/useToast";
 import { Line, Pie, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -38,6 +37,8 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
 
 ChartJS.register(
   CategoryScale,
@@ -59,13 +60,12 @@ const LazyLoadSection = ({ children, id }) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // When section is 300px from entering viewport, start loading it
         if (entry.isIntersecting) {
           setIsVisible(true);
           observer.disconnect();
         }
       },
-      { rootMargin: "300px" } // Load when within 300px of viewport
+      { rootMargin: "300px" }
     );
 
     if (sectionRef.current) {
@@ -116,7 +116,6 @@ const Dashboard = () => {
     datasets: [],
   });
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   // Separate fetchers for different sections
   const fetchBasicStats = async () => {
@@ -133,11 +132,7 @@ const Dashboard = () => {
       return analyticsData;
     } catch (error) {
       console.error("Failed to fetch stats:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load dashboard statistics.",
-        variant: "destructive",
-      });
+      toast.error("Failed to load dashboard statistics.");
       throw error;
     }
   };
@@ -158,11 +153,7 @@ const Dashboard = () => {
       return events;
     } catch (error) {
       console.error("Failed to fetch events:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load upcoming events.",
-        variant: "destructive",
-      });
+      toast.error("Failed to load upcoming events.");
       throw error;
     }
   };
@@ -170,7 +161,6 @@ const Dashboard = () => {
   const processChartData = (analyticsData) => {
     if (!analyticsData) return;
 
-    // Monthly attendance chart
     if (analyticsData.participantsTrend) {
       setParticipantChartData({
         labels: analyticsData.participantsTrend.map((item) => item.date),
@@ -185,7 +175,6 @@ const Dashboard = () => {
       });
     }
 
-    // Category distribution chart
     if (analyticsData.eventsByCategory) {
       setCategoryChartData({
         labels: analyticsData.eventsByCategory.map((item) => item.category),
@@ -207,7 +196,6 @@ const Dashboard = () => {
       });
     }
 
-    // Capacity usage chart
     if (analyticsData.capacityUsageByEvent) {
       setCapacityChartData({
         labels: analyticsData.capacityUsageByEvent.map(
@@ -226,7 +214,6 @@ const Dashboard = () => {
     }
   };
 
-  // Initial data loading - just load critical data for above the fold
   useEffect(() => {
     let isMounted = true;
 
@@ -236,13 +223,8 @@ const Dashboard = () => {
         const analyticsData = await fetchBasicStats();
         if (!isMounted) return;
 
-        // Initial data is loaded, hide main loader
         setLoading(false);
-
-        // Process chart data but don't block UI
         processChartData(analyticsData);
-
-        // Start loading events data in background
         fetchEventsData();
       } catch (error) {
         console.error("Dashboard initialization error:", error);
@@ -311,7 +293,7 @@ const Dashboard = () => {
     maintainAspectRatio: false,
     scales: {
       y: {
-        beginAtZero: true,
+        beginAtZero : true,
         max: 100,
         title: {
           display: true,
@@ -338,6 +320,7 @@ const Dashboard = () => {
 
   return (
     <div className="container px-4 py-8 mx-auto">
+      <ToastContainer /> {/* Add ToastContainer here */}
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
@@ -355,7 +338,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Priority content - above the fold */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statsCards.map((stat, index) => (
           <Card
@@ -376,7 +358,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Lazily loaded content - below the fold */}
       <LazyLoadSection id="most-popular-event">
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 flex items-center">
@@ -447,7 +428,6 @@ const Dashboard = () => {
 
       <LazyLoadSection id="analytics-charts">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Monthly Attendance Chart */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -468,7 +448,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Category Distribution Chart */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">

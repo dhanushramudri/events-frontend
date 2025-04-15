@@ -8,11 +8,11 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser , setCurrentUser ] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const Navigate = useNavigate(); // Assuming you're using react-router-dom
+  const Navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -34,13 +34,8 @@ export const AuthProvider = ({ children }) => {
         console.log("Auth /me response:", response.data);
 
         if (response.data && response.data.user) {
-          console.log("User authenticated ✅:", response.data.user);
-          if (response.data.user) {
-            console.log("navigating to / page");
-            Navigate("/");
-            console.log("navigated");
-          }
-          setCurrentUser(response.data.user);
+          console.log("User  authenticated ✅:", response.data.user);
+          setCurrentUser (response.data.user);
           setIsAuthenticated(true);
         }
       } catch (err) {
@@ -48,7 +43,7 @@ export const AuthProvider = ({ children }) => {
           "Auth verification error ❌:",
           err.response?.data || err.message
         );
-        localStorage.removeItem("token"); // Changed from adminToken to token
+        localStorage.removeItem("token");
         delete axios.defaults.headers.common["Authorization"];
       } finally {
         setLoading(false);
@@ -58,27 +53,30 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
+  // Log currentUser  whenever it changes
+  useEffect(() => {
+    console.log("Current user updated:", currentUser );
+  }, [currentUser ]);
+
   const login = async (email, password) => {
     setError(null);
     console.log("Attempting login...");
 
     try {
-      // Updated to match your original login endpoint in the Login component
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await axios.post(`${API_URL}/auth /login`, {
         email,
-        password,
-      });
+        password });
 
       const { token, user } = response.data;
       console.log("Login successful ✅", { token, user });
 
-      localStorage.setItem("token", token); // Changed from adminToken to token
+      localStorage.setItem("token", token);
       if (user?.role) {
         localStorage.setItem("role", user.role);
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      setCurrentUser(user);
+      setCurrentUser (user);
       setIsAuthenticated(true);
       return user;
     } catch (err) {
@@ -94,17 +92,18 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     delete axios.defaults.headers.common["Authorization"];
-    setCurrentUser(null);
+    setCurrentUser (null);
     setIsAuthenticated(false);
   };
 
   const value = {
-    currentUser,
+    currentUser ,
     isAuthenticated,
     loading,
     error,
     login,
     logout,
+    setCurrentUser ,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

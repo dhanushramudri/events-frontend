@@ -7,15 +7,14 @@ import {
   CardContent,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { useToast } from "../hooks/useToast";
 import { getUsers } from "../services/userService";
 import { Table, TableRow, TableCell } from "../components/ui/Table";
+import  {toast, ToastContainer } from "react-toastify";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,11 +24,7 @@ const Users = () => {
         setUsers(res || []);
       } catch (error) {
         console.error("Error fetching users:", error);
-        toast({
-          title: "Error",
-          description: "Unable to load users.",
-          variant: "destructive",
-        });
+        toast.error("Failed to fetch users. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -48,6 +43,7 @@ const Users = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mb-8">
         <h1 className="text-4xl font-semibold text-gray-900">Users</h1>
         <div className="relative w-full sm:w-80">

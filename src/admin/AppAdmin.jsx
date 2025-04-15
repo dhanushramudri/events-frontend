@@ -40,7 +40,7 @@ const ProtectedRoute = ({ children }) => {
 // Public route component (handles login route redirection for authenticated users)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading, currentUser } = useAuth();
-  console.log("current user", currentUser);
+  // console.log("current user is", currentUser);
 
   const role = localStorage.getItem("role");
 
@@ -54,7 +54,7 @@ const PublicRoute = ({ children }) => {
 
   // Check if the user is authenticated or has a role (admin/user)
   if (isAuthenticated || role === "admin" || role === "user") {
-    return <Navigate to="/" />; // Redirect to home if user is authenticated or has a valid role
+    return <Navigate to="/" />; 
   }
 
   return children;

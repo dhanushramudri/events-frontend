@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { API_URL } from "../config/constants";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = ({ onSwitch }) => {
+  const {currentUser , setCurrentUser } = useAuth(); 
+  // console.log("current user is", currentUser);
+  const navigate = useNavigate()
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +25,9 @@ const Login = ({ onSwitch }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const token = localStorage.getItem("token"); // Retrieve token
-
+  
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -33,28 +37,22 @@ const Login = ({ onSwitch }) => {
         },
         body: JSON.stringify(formData), // Send formData as JSON
       });
-
+  
       const result = await response.json();
-      console.log("Login response:", result);
-
-      // Check if the response indicates a successful login
       if (response.ok) {
-        navigate("/");
-        // Store token if it exists in the response
+        navigate('/')
+
         if (result.token) {
           localStorage.setItem("token", result.token);
         }
-
-        // Store user role if available
+  
         if (result.user && result.user.role) {
           localStorage.setItem("role", result.user.role);
         }
-
-        // Log before redirect
-        console.log("Login successful, redirecting to home page");
-
-        // Redirect to homepage after successful login
-        navigate("/");
+  
+        setCurrentUser (result.user);
+        console.log("User data set in context:", currentUser);
+        window.location.href = "/"; // Redirect to the home page or dashboard
       } else {
         // Handle login failure
         console.error("Login failed:", result.message || "Unknown error");
