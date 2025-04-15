@@ -15,7 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useAuth } from "../admin/contexts/AuthContext.jsx";
-import { Button } from "../admin/components/ui/Button.jsx"
+import { Button } from "../admin/components/ui/button"
 
 const UserMainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);

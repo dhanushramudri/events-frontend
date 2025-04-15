@@ -22,7 +22,7 @@ import {
   CardDescription,
   CardFooter,
 } from "../components/ui/card";
-import { Button } from"../components/ui/Button.jsx";
+import { Button } from"../components/ui/button";
 import EventCard from "../components/EventCard";
 import { Line, Pie, Bar } from "react-chartjs-2";
 import {
