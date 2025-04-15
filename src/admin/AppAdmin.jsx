@@ -17,6 +17,7 @@ import AuthForm from "./pages/AuthForm";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
 import AppUser from "../user/AppUser";
+import UserMainLayout from "../user/UserMainLayout";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -81,7 +82,7 @@ function App() {
               {role === "admin" ? (
                 <MainLayout /> // Admin route - full access
               ) : (
-                <AppUser /> // User route - restricted access
+                <UserMainLayout /> // User route - restricted access
               )}
             </ProtectedRoute>
           }

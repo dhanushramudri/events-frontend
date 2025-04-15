@@ -23,7 +23,7 @@ import {
   CardTitle,
   CardDescription,
 } from "../components/ui/card";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button.jsx";
 import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { formatDateTime } from "../utils/cn";

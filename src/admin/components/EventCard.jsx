@@ -18,7 +18,7 @@ import { API_URL } from "../config/constants";
 import toast from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event  }) => {
   // console.log("event", event);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -40,7 +40,7 @@ const EventCard = ({ event }) => {
     };
 
     checkFavoriteStatus();
-  }, [event._id]);
+  }, [event._id ]);
 
   const toggleFavorite = async (e) => {
     e.preventDefault(); // Prevent card navigation
@@ -56,12 +56,13 @@ const EventCard = ({ event }) => {
       toast.success(
         `Event ${isFavorite ? "removed from" : "added to"} favorites`
       );
+      //reload here 
+       window.location.reload()
       alert("Event updated successfully!");
     } catch (err) {
       console.error("Failed to update favorite status", err);
     }
   };
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "upcoming":
@@ -76,6 +77,8 @@ const EventCard = ({ event }) => {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+
 
   const imageUrl =
     event.image ||
