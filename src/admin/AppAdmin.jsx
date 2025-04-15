@@ -55,7 +55,7 @@ const PublicRoute = ({ children }) => {
 
   // Check if the user is authenticated or has a role (admin/user)
   if (isAuthenticated || role === "admin" || role === "user") {
-    return <Navigate to="/" />; 
+    return <Navigate to="/" />;
   }
 
   return children;
