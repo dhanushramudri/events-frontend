@@ -22,7 +22,7 @@ import {
   CardDescription,
   CardFooter,
 } from "../components/ui/card";
-import { Button } from"../components/ui/button";
+import { Button } from "../components/ui/button";
 import EventCard from "../components/EventCard";
 import { Line, Pie, Bar } from "react-chartjs-2";
 import {
@@ -37,8 +37,8 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast notifications
 import LazyLoadSection from "../components/LazyLoadSection";
 
 ChartJS.register(
@@ -52,8 +52,6 @@ ChartJS.register(
   Legend,
   ArcElement
 );
-
-
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -86,14 +84,17 @@ const Dashboard = () => {
     try {
       const analyticsData = await getAnalytics();
       console.log("Analytics Data:", analyticsData); // Debugging line
-  
+
       // Use reduce to calculate total attendees
-      const totalAttendies = analyticsData.capacityUtilization.reduce((total, cap) => {
-        return total + (cap.approved || 0); // Ensure cap.approved is a number
-      }, 0);
-  
+      const totalAttendies = analyticsData.capacityUtilization.reduce(
+        (total, cap) => {
+          return total + (cap.approved || 0); // Ensure cap.approved is a number
+        },
+        0
+      );
+
       console.log("Total Attendies:", totalAttendies); // Debugging line
-  
+
       setStats({
         totalEvents: analyticsData.totalEvents || 0,
         totalParticipants: totalAttendies || 0,
@@ -103,7 +104,7 @@ const Dashboard = () => {
         capacityUsage: analyticsData.capacityUsage || 0,
         totalAttendies, // Add totalAttendies to the stats
       });
-  
+
       return analyticsData;
     } catch (error) {
       console.error("Failed to fetch stats:", error);
@@ -131,6 +132,8 @@ const Dashboard = () => {
       throw error;
     }
   };
+
+  console.log("popularEvent", popularEvent); // Debugging line
 
   const processChartData = (analyticsData) => {
     if (!analyticsData) return;
@@ -267,7 +270,7 @@ const Dashboard = () => {
     maintainAspectRatio: false,
     scales: {
       y: {
-        beginAtZero : true,
+        beginAtZero: true,
         max: 100,
         title: {
           display: true,
@@ -311,7 +314,6 @@ const Dashboard = () => {
           </Link>
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statsCards.map((stat, index) => (
           <Card
@@ -331,7 +333,6 @@ const Dashboard = () => {
           </Card>
         ))}
       </div>
-
       <LazyLoadSection id="most-popular-event">
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4 flex items-center">
@@ -354,7 +355,7 @@ const Dashboard = () => {
                       Category: {popularEvent.category}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Participants: {popularEvent.participants?.length || 0}
+                      Participants: {popularEvent.participantsCount}
                     </p>
                   </div>
                   <div className="text-right">
@@ -399,7 +400,6 @@ const Dashboard = () => {
           )}
         </div>
       </LazyLoadSection>
-
       <LazyLoadSection id="analytics-charts">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <Card>
@@ -446,7 +446,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </LazyLoadSection>
-
       <LazyLoadSection id="capacity-usage-chart">
         <div className="mb-8">
           <Card>
@@ -473,7 +472,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </LazyLoadSection>
-
       <LazyLoadSection id="upcoming-events">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
@@ -514,7 +512,6 @@ const Dashboard = () => {
           )}
         </div>
       </LazyLoadSection>
-
       <LazyLoadSection id="quick-actions">
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
