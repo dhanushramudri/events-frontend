@@ -190,17 +190,17 @@ const Participants = () => {
     }
   };
 
-  const removeUser = async (userId) => {
-    try {
-      await axios.delete(
-        `${API_URL}/admin/events/${eventId}/participants/${userId}`
-      );
-      toast.success("User removed successfully.");
-      fetchParticipants();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to remove user.");
-    }
-  };
+  // const removeUser = async (userId) => {
+  //   try {
+  //     await axios.delete(
+  //       `${API_URL}/admin/events/${eventId}/participants/${userId}`
+  //     );
+  //     toast.success("User removed successfully.");
+  //     fetchParticipants();
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Failed to remove user.");
+  //   }
+  // };
 
   const sendNotification = async () => {
     if (!notificationMessage.trim()) {
@@ -571,13 +571,13 @@ const Participants = () => {
                           >
                             <X className="text-red-600 w-5 h-5" />
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => removeUser(user._id)}
                             title="Remove"
                             className="p-1 hover:bg-red-100 rounded"
                           >
                             <Trash className="text-red-600 w-5 h-5" />
-                          </button>
+                          </button> */}
                           <button
                             onClick={() => sendDirectEmailToUser(user)}
                             title="Email"
