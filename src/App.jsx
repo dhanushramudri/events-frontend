@@ -8,6 +8,7 @@ import AppAdmin from "./admin/AppAdmin";
 import AppUser from "./user/AppUser";
 import AuthForm from "./admin/pages/AuthForm";
 import { AuthProvider, useAuth } from "./admin/contexts/AuthContext";
+import LandingPage from "./admin/pages/LandingPage";
 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
 
     <Routes>
       <Route path="/login" element={<AuthForm />} />
+      <Route path= "/landing" element={<LandingPage />} />
       {role === "admin" ? (
         <Route path="/*" element={<AppAdmin />} />
       ) : role === "user" ? (

@@ -22,7 +22,7 @@ import {
   CardDescription,
   CardFooter,
 } from "../components/ui/card";
-import { Button } from "../components/ui/button";
+import { Button } from"../components/ui/Button.jsx";
 import EventCard from "../components/EventCard";
 import { Line, Pie, Bar } from "react-chartjs-2";
 import {
@@ -39,6 +39,7 @@ import {
 } from "chart.js";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
+import LazyLoadSection from "../components/LazyLoadSection";
 
 ChartJS.register(
   CategoryScale,
@@ -52,45 +53,7 @@ ChartJS.register(
   ArcElement
 );
 
-// Component for lazy loading sections
-const LazyLoadSection = ({ children, id }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "300px" }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.disconnect();
-      }
-    };
-  }, []);
-
-  return (
-    <div ref={sectionRef} id={id} className="w-full">
-      {isVisible ? (
-        children
-      ) : (
-        <div className="min-h-32 flex items-center justify-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -99,6 +62,7 @@ const Dashboard = () => {
     upcomingEvents: 0,
     ongoingEvents: 0,
     totalRegisteredUsers: 0,
+
     capacityUsage: 0,
   });
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -121,14 +85,25 @@ const Dashboard = () => {
   const fetchBasicStats = async () => {
     try {
       const analyticsData = await getAnalytics();
+      console.log("Analytics Data:", analyticsData); // Debugging line
+  
+      // Use reduce to calculate total attendees
+      const totalAttendies = analyticsData.capacityUtilization.reduce((total, cap) => {
+        return total + (cap.approved || 0); // Ensure cap.approved is a number
+      }, 0);
+  
+      console.log("Total Attendies:", totalAttendies); // Debugging line
+  
       setStats({
         totalEvents: analyticsData.totalEvents || 0,
-        totalParticipants: analyticsData.totalParticipants || 0,
+        totalParticipants: totalAttendies || 0,
         upcomingEvents: analyticsData.upcomingEvents || 0,
         ongoingEvents: analyticsData.ongoingEvents || 0,
-        totalRegisteredUsers: analyticsData.totalRegisteredUsers || 0,
+        totalRegisteredUsers: analyticsData.totalParticipants || 0,
         capacityUsage: analyticsData.capacityUsage || 0,
+        totalAttendies, // Add totalAttendies to the stats
       });
+  
       return analyticsData;
     } catch (error) {
       console.error("Failed to fetch stats:", error);
@@ -136,7 +111,6 @@ const Dashboard = () => {
       throw error;
     }
   };
-
   const fetchEventsData = async () => {
     try {
       const { events } = await getEvents({ status: "upcoming", limit: 3 });
