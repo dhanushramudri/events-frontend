@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { API_URL } from "../config/constants";
+import { useAuth } from "../contexts/AuthContext";
+import toast from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
 
 const SignUp = ({ onSwitch }) => {
+  const { setCurrentUser  } = useAuth(); // Get setCurrentUser  from context
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,14 +24,44 @@ const SignUp = ({ onSwitch }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signup logic here
     console.log("Signup data:", formData);
+
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Save the token to local storage
+        localStorage.setItem("token", result.token);
+        
+        // Set the current user in context
+        setCurrentUser (result.user);
+        
+        // Redirect to the home page or dashboard
+        toast.success("Registration successful!");
+        navigate('/login');
+      } else {
+        // Handle registration failure
+        console.error("Registration failed:", result.message || "Unknown error");
+        // You might want to show an error message to the user here
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
     <div className="min-h-screen flex font-sans">
+      <ToastContainer/>
       {/* Left side - Form */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
         <div className="max-w-md mx-auto w-full">
@@ -92,7 +130,7 @@ const SignUp = ({ onSwitch }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Create a password"
+                placeholder="Create a password "
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-purple-500 focus:bg-white focus:outline-none transition duration-150"
                 required
                 minLength="6"

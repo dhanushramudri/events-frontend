@@ -65,15 +65,21 @@ const EventDetails = () => {
         const res = await axios.get(`${API_URL}/user/participants`, {
           withCredentials: true,
         });
-        const registered = res.data.participants.some(
-          (participant) => participant.eventId === eventId
-        );
+        console.log("res is ", res.data.participants);
+    
+        // Use map to iterate through participants and check registration status
+        const registered = res.data.participants.map((participant) => {
+          return participant.eventId._id === eventId;
+        }).includes(true); // Check if any of the results are true
+    
         setIsRegistered(registered);
       } catch (error) {
         console.error("Error checking registration status:", error);
       }
     };
-
+    
+    // Log the registration status
+    console.log("registered status is", isRegistered);
     fetchEvent();
   }, [eventId]);
 

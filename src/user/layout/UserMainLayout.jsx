@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../../admin/contexts/AuthContext";
 import { Button } from "../../admin/components/ui/button"
@@ -40,13 +41,17 @@ const UserMainLayout = () => {
 
   const navItems = [
     {
-      icon: <Calendar className="h-5 w-5" />,
+      icon: <Calendar className="h-5 w-5" />, // Icon for Events
       label: "Events",
       path: "/events",
     },
-    { icon: <Users className="h-5 w-5" />, label: "Users", path: "/users" },
     {
-      icon: <Settings className="h-5 w-5" />,
+      icon: <ClipboardList className="h-5 w-5" />, // Different icon for Registered Events
+      label: "Registered Events",
+      path: "/registeredEvents",
+    },
+    {
+      icon: <Settings className="h-5 w-5" />, // Icon for Favorites
       label: "Favorites",
       path: "/favorites",
     },
