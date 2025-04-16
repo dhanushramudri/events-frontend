@@ -284,6 +284,8 @@ const Dashboard = () => {
     },
   };
 
+  console.log("popular event", popularEvent); // Debugging line
+
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -344,7 +346,7 @@ const Dashboard = () => {
               <CardHeader>
                 <CardTitle>{popularEvent.title}</CardTitle>
                 <CardDescription>
-                  {new Date(popularEvent.startDate).toLocaleDateString()} -{" "}
+                  {new Date(popularEvent.registrationClosesAt).toLocaleDateString()} -{" "}
                   {popularEvent.location}
                 </CardDescription>
               </CardHeader>
