@@ -10,7 +10,7 @@ import {
   Heart,
   Search,
 } from "lucide-react";
-import { Button } from "../admin/components/ui/button";
+import { Button } from "../../admin/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,18 +18,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../admin/components/ui/card";
+} from "../../admin/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../admin/components/ui/select";
-import { Badge } from "../admin/components/ui/badge";
-import { Input } from "../admin/components/ui/input";
-import { formatDateTime } from "../admin/utils/cn";
-import { API_URL } from "../admin/config/constants";
+} from "../../admin/components/ui/select";
+import { Badge } from "../../admin/components/ui/badge";
+import { Input } from "../../admin/components/ui/input";
+import { formatDateTime } from "../../admin/utils/cn";
+import { API_URL } from "../../admin/config/constants";
 import {Link} from "react-router-dom";
 
 // Simple Progress Component
@@ -63,6 +63,8 @@ const Events = () => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [userParticipants, setUserParticipants] = useState([]);
 
+
+  console.log("favorites", favorites);
   // Fetch all events, favorites, and user participants ONCE on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -235,16 +237,27 @@ const Events = () => {
       alert("Failed to join the waitlist. Please try again.");
     }
   };
-
   const toggleFavorite = async (eventId, e) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if the event is already a favorite
+    const isFavorite = favorites.some(favorite => favorite._id === eventId);
+    console.log("isFavorite", isFavorite);
+  
+    // Construct the API endpoint based on the favorite status
+    const endpoint = isFavorite
+      ? `${API_URL}/users/favorites/remove/${eventId}`
+      : `${API_URL}/users/favorites/add/${eventId}`;  
+  
+    // Optimistically update the favorites state
+    const updatedFavorites = isFavorite
+      ? favorites.filter((favorite) => favorite._id !== eventId)
+      : [...favorites, { _id: eventId }]; // Assuming you want to keep the same structure
+  
+    setFavorites(updatedFavorites);
+  
     try {
-      const isFavorite = favorites.includes(eventId);
-      const endpoint = isFavorite
-        ? `${API_URL}/users/favorites/remove/${eventId}`
-        : `${API_URL}/api/users/favorites/add/${eventId}`;
-      
       await axios.post(
         endpoint,
         {},
@@ -255,14 +268,10 @@ const Events = () => {
           withCredentials: true,
         }
       );
-      
-      if (isFavorite) {
-        setFavorites(favorites.filter((id) => id !== eventId));
-      } else {
-        setFavorites([...favorites, eventId]);
-      }
     } catch (err) {
       console.error("Failed to update favorite status", err);
+      // Revert the favorites state if the request fails
+      setFavorites(favorites);
     }
   };
 
@@ -415,7 +424,9 @@ const Events = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedEvents.map((event) => {
-            const isFavorite = favorites.includes(event._id);
+            console.log("event id", event._id);
+            const isFavorite = favorites.some(favorite => favorite._id === event._id);
+            console.log("isFavorite", isFavorite);
             const capacityPercentage = event.capacity
               ? Math.round((event.participantsCount / event.capacity) * 100)
               : 0;

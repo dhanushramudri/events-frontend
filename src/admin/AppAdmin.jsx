@@ -16,8 +16,6 @@ import Users from "./pages/Users";
 import AuthForm from "./pages/AuthForm";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
-import AppUser from "../user/AppUser";
-import UserMainLayout from "../user/UserMainLayout";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -32,7 +30,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/landing" />;
   }
 
   return children;
@@ -61,7 +59,7 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-function App() {
+function AppAdmin() {
   const role = localStorage.getItem("role"); // Check the role from localStorage
 
   return (
@@ -79,11 +77,8 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              {role === "admin" ? (
-                <MainLayout /> // Admin route - full access
-              ) : (
-                <UserMainLayout /> // User route - restricted access
-              )}
+              {role === "admin"}
+              <MainLayout />
             </ProtectedRoute>
           }
         >
@@ -110,4 +105,4 @@ function App() {
   );
 }
 
-export default App;
+export default AppAdmin;

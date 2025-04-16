@@ -15,11 +15,11 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../admin/components/ui/card";
-import { Badge } from "../admin/components/ui/badge";
-import { Separator } from "../admin/components/ui/separator";
-import { formatDateTime } from "../admin/utils/cn";
-import { API_URL } from "../admin/config/constants";
+} from "../../admin/components/ui/card";
+import { Badge } from "../../admin/components/ui/badge";
+import { Separator } from "../../admin/components/ui/separator";
+import { formatDateTime } from "../../admin/utils/cn";
+import { API_URL } from "../../admin/config/constants";
 
 const EventDetails = () => {
   const { eventId } = useParams();
@@ -29,6 +29,21 @@ const EventDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
+
+    const checkFavorite = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/events/favorites/check/${eventId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setIsFavorite(res.data.isFavorite);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+    checkFavorite();
     const fetchEvent = async () => {
       try {
         const res = await axios.get(`${API_URL}/events/${eventId}`);
@@ -39,7 +54,7 @@ const EventDetails = () => {
         setEvent(res.data.event);
 
         const favRes = await axios.get(
-          `${API_URL}/users/favorites/check/${eventId}`,
+          `${API_URL}/events/favorites/`,
           {
             withCredentials: true,
           }
@@ -96,9 +111,8 @@ const EventDetails = () => {
 
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white rounded-full p-2 shadow-lg">
             <Heart
-              className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"
-              }`}
+              className={`w - 4 h - 4 sm: w - 5 sm: h - 5 ${isFavorite ? "fill-red-500 text-red-500" : "text-blue-500"
+                }`}
             />
           </div>
         </div>
@@ -159,7 +173,8 @@ const EventDetails = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)}`}</span>
+                  <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)
+                    }`}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base font-medium">Auto-Approve:</span>

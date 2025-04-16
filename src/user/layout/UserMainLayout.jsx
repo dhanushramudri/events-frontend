@@ -13,9 +13,10 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react";
-import { useAuth } from "../admin/contexts/AuthContext.jsx";
-import { Button } from "../admin/components/ui/button"
+import { useAuth } from "../../admin/contexts/AuthContext";
+import { Button } from "../../admin/components/ui/button"
 
 const UserMainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -38,13 +39,11 @@ const UserMainLayout = () => {
   };
 
   const navItems = [
-   
     {
       icon: <Calendar className="h-5 w-5" />,
       label: "Events",
       path: "/events",
     },
-   
     { icon: <Users className="h-5 w-5" />, label: "Users", path: "/users" },
     {
       icon: <Settings className="h-5 w-5" />,
