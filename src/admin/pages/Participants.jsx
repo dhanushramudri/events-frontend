@@ -45,6 +45,8 @@ const Participants = () => {
     fetchEventDetails();
   }, [eventId]);
 
+
+
   const fetchEventDetails = async () => {
     try {
       const res = await axios.get(
@@ -124,14 +126,30 @@ const Participants = () => {
     }
   };
 
-  const rejectUser = async (userId) => {
+  const rejectUser  = async (userId) => {
     try {
+      // Check if the current time is within 12 hours of registration closing
+      const currentTime = new Date();
+      const registrationCloseTime = new Date(event.registrationClosesAt);
+      const timeDifference = registrationCloseTime - currentTime; // in milliseconds
+      console.log("time difference", timeDifference);
+      const twelveHoursInMilliseconds = 12 * 60 * 60 * 1000; // 12 hours
+  
+      if (timeDifference <= twelveHoursInMilliseconds) {
+        console.log("time difference", timeDifference);
+        console.log("current time", currentTime);
+        console.log("registration close time", registrationCloseTime);
+        toast.error("You cannot reject a user within 12 hours of registration closing.");
+        alert("Cannot reject user within 12 hours of registration closing.");
+        return; // Exit the function if within 12 hours
+      }
+  
       // Step 1: Reject the user
       await axios.post(
         `${API_URL}/admin/events/${eventId}/participants/${userId}/reject`
       );
-      toast.success("User rejected from waitlist.");
-
+      toast.success("User  rejected from waitlist.");
+  
       // ✅ Updated user lookup
       const allUsers = [
         ...(groupedUsers.pending || []),
@@ -139,36 +157,36 @@ const Participants = () => {
         ...(groupedUsers.rejected || []),
       ];
       const user = allUsers.find((u) => u._id === userId);
-
+  
       if (user) {
-        await sendDirectEmailToUser({
+        await sendDirectEmailToUser ({
           ...user,
           status: "rejected",
         });
       }
-
+  
       // Step 2: Refetch updated participants list
       const res = await axios.get(
         `${API_URL}/admin/events/${eventId}/participants`
       );
       const all = res.data.participants;
-
+  
       const grouped = {
         approved: all.filter((p) => p.status === "approved"),
         pending: all.filter((p) => p.status === "pending"),
         rejected: all.filter((p) => p.status === "rejected"),
       };
       setGroupedUsers(grouped); // update the UI too
-
+  
       // Step 3: Calculate available slots
       const approvedCount = grouped.approved.length;
       const availableSlots = event.capacity - approvedCount;
       console.log("Available slots:", availableSlots);
-
+  
       // Step 4: Get users to approve from updated pending list
       const usersToApprove = grouped.pending.slice(0, availableSlots);
       console.log("Users to auto-approve:", usersToApprove);
-
+  
       // Step 5: Auto-approve them
       if (usersToApprove.length > 0) {
         const approvalPromises = usersToApprove.map((user) =>
@@ -181,7 +199,7 @@ const Participants = () => {
       } else {
         toast.success("No one in the waitlist to auto-approve.");
       }
-
+  
       // Step 6: Refetch again after approvals
       fetchParticipants();
     } catch (error) {
@@ -361,6 +379,7 @@ const Participants = () => {
     },
   ];
 
+  console.log("event details", event);
   if (loading) {
     return (
       <Card className="w-full shadow-md">

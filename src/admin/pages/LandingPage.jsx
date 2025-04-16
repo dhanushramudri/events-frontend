@@ -22,7 +22,7 @@ const LandingPage = () => {
     },
     {
       title: "Custom Ticketing",
-      description: "Create and sell tickets with flexible pricing options",
+      description: "Create and organize events with ease",
       image: "tickets.svg",
     },
   ];
@@ -118,7 +118,7 @@ const LandingPage = () => {
         <nav className="flex justify-between items-center mb-16">
           <div className="flex items-center">
             <h1 className="text-3xl font-bold text-gray-800 inline-flex items-center">
-              <span className="text-purple-600 font-bold">Event</span>Flow
+              <span className="text-purple-600 font-bold">J</span>Bytes
               <span className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded ml-2 uppercase font-semibold">
                 pro
               </span>
@@ -128,9 +128,7 @@ const LandingPage = () => {
             <button className="text-gray-600 hover:text-gray-900 font-medium">
               Features
             </button>
-            <button className="text-gray-600 hover:text-gray-900 font-medium">
-              Pricing
-            </button>
+         
             <button className="text-gray-600 hover:text-gray-900 font-medium">
               About
             </button>
@@ -177,7 +175,7 @@ const LandingPage = () => {
             <div className="flex space-x-4">
               <Button
                 variant="gradient"
-                onClick={() => navigate("/demo")}
+                onClick={() => navigate("/login")}
                 className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 text-lg"
               >
                 Get Started
@@ -444,7 +442,6 @@ const LandingPage = () => {
           >
             Start Your Free Trial
           </Button>
-          <p className="mt-4 text-gray-500">No credit card required</p>
         </motion.div>
       </div>
 
@@ -473,11 +470,7 @@ const LandingPage = () => {
                       Features
                     </button>
                   </li>
-                  <li>
-                    <button className="text-gray-600 hover:text-purple-600">
-                      Pricing
-                    </button>
-                  </li>
+                 
                   <li>
                     <button className="text-gray-600 hover:text-purple-600">
                       Integrations
