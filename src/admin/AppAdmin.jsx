@@ -92,6 +92,7 @@ function AppAdmin() {
               <Route path="users" element={<Users />} />
               <Route path="events/new" element={<CreateEvent />} />
               <Route path="favorites" element={<Favorites />} />
+              <Route path="/profile" element={<UserProfile/>}/>
               <Route
                 path="events/:eventId/participants"
                 element={<Participants />}
