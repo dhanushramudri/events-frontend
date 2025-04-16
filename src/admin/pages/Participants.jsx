@@ -85,7 +85,7 @@ const Participants = () => {
       const grouped = {
         approved: all.filter((p) => p.status === "approved"),
         pending: all.filter((p) => p.status === "pending"),
-        rejected: all.filter((p) => p.status === "rejected"),
+        rejected: all.filter((p) => p.status === "rejected" || p.status === "withdrawn"),
       };
 
       setGroupedUsers(grouped);
@@ -174,9 +174,12 @@ const Participants = () => {
       const grouped = {
         approved: all.filter((p) => p.status === "approved"),
         pending: all.filter((p) => p.status === "pending"),
-        rejected: all.filter((p) => p.status === "rejected"),
+        rejected: all.filter((p) => p.status === "rejected" || p.status === "withdrawn"),
+        
       };
       setGroupedUsers(grouped); // update the UI too
+
+      console.log("Grouped users after rejection:", grouped);
   
       // Step 3: Calculate available slots
       const approvedCount = grouped.approved.length;
@@ -371,7 +374,7 @@ const Participants = () => {
     },
     {
       label: "Withdrawn",
-      key: "rejected",
+      key: "rejected" ,
       description: "Removed or cancelled",
       color: "bg-gray-500",
       textColor: "text-white",

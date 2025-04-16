@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Menu,
   X,
@@ -68,28 +68,29 @@ const MainLayout = () => {
         className={({ isActive }) =>
           `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
             isActive
-              ? "bg-primary text-white"
+              ? "bg-white  text-[#ff6196] font-semibold"
               : "hover:bg-gray-100 text-gray-700"
           }`
         }
         onClick={() => setMobileSidebar(false)}
       >
         {icon}
-        {sidebarOpen && <span>{label}</span>}
+        {sidebarOpen && <span className="text-[#ff6196]">{label}</span>}
       </NavLink>
     ) : (
-      <button
+      <Button
+      variant="primary"
         onClick={onClick}
-        className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
+        // className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
       >
         {icon}
         {sidebarOpen && <span>{label}</span>}
-      </button>
+      </Button>
     );
 
   const Logo = () => (
     <div className="text-2xl font-extrabold tracking-tight flex items-center">
-      <span className="text-purple-600">J</span>
+      <span className="text-[#ff6196]">J</span>
       {sidebarOpen && <span className="text-gray-900 ml-1">Bytes</span>}
     </div>
   );
@@ -175,7 +176,7 @@ const MainLayout = () => {
 
             {sidebarOpen ? (
               <Button
-                variant="outline"
+                variant="tab"
                 className="w-full flex items-center justify-center"
                 onClick={handleLogout}
               >
@@ -244,11 +245,13 @@ const MainLayout = () => {
 
               {/* Avatar */}
               <div>
+                <Link to="/profile" className="flex items-center">
                 <button className="flex items-center p-2 rounded-full hover:bg-gray-100">
                   <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-100 text-xs font-bold uppercase text-purple-600">
                     {currentUser?.name?.charAt(0) || "A"}
                   </div>
                 </button>
+                </Link>
               </div>
             </div>
           </div>

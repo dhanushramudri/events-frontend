@@ -10,7 +10,7 @@ const buttonVariants = cva(
         primary: "bg-[#19105b] text-white hover:bg-[#19105b]/80 shadow-sm border-1", // Primary color
         secondary: "bg-[#ff6196] text-white hover:bg-[#ff4a7a] shadow-sm", // Secondary color
         destructive: "bg-red-400 text-white hover:bg-red-700 shadow-sm",
-        outline: "border border-1 border-blue-400 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 bg-black",
+        outline: "border border-1 border-blue-400 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 bg-white border-1 border-black",
         ghost: "text-gray-700 hover:bg-gray-100 hover:text-gray-900 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1),0px 2px 0px rgba(0, 0, 0, 0.1),0px -2px 0px rgba(0, 0, 0, 0.1)]",
         link: "text-blue-600 underline-offset-4 hover:underline",
         gradient: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-md",

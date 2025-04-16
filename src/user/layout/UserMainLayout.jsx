@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Menu,
   X,
@@ -240,11 +240,13 @@ const UserMainLayout = () => {
 
               {/* Avatar */}
               <div>
+              <Link to='/profile' className="flex items-center">
                 <button className="flex items-center p-2 rounded-full hover:bg-gray-100">
                   <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-100 text-xs font-bold uppercase text-purple-600">
                     {currentUser?.name?.charAt(0) || "A"}
                   </div>
                 </button>
+              </Link>
               </div>
             </div>
           </div>

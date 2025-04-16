@@ -16,6 +16,7 @@ import Users from "./pages/Users";
 import AuthForm from "./pages/AuthForm";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
+import UserProfile from "./pages/UserProfile";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {

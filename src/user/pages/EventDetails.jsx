@@ -30,6 +30,7 @@ const EventDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(null);
+  const [isWithdrawn, setIsWithdrawn] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -60,19 +61,31 @@ const EventDetails = () => {
         console.error("Error checking favorite status:", error);
       }
     };
-
     const checkRegistrationStatus = async () => {
       try {
         const res = await axios.get(`${API_URL}/user/participants`, {
           withCredentials: true,
         });
-        const registered = res.data.participants.some(participant => participant.eventId._id === eventId);
+    
+        let registered = false;
+        let foundWaitlistParticipant = false;
+    
+        res.data.participants.forEach(participant => {
+          if (participant.eventId._id === eventId) {
+            if (participant.queuePosition === -1) {
+              setIsWithdrawn(true); // User has withdrawn
+              registered = false; // Ensure registered is false
+            } else {
+              registered = true; // User is registered for the event
+              foundWaitlistParticipant = true; // User is on the waitlist
+              setWaitlistPosition(participant.queuePosition);
+            }
+          }
+        });
+    
         setIsRegistered(registered);
-
-        // Check if the user is on the waitlist
-        const waitlistParticipant = res.data.participants.find(participant => participant.eventId._id === eventId && participant.queuePosition);
-        if (waitlistParticipant) {
-          setWaitlistPosition(waitlistParticipant.queuePosition);
+        if (!foundWaitlistParticipant) {
+          setWaitlistPosition(null); // Reset if no waitlist participant found
         }
       } catch (error) {
         console.error("Error checking registration status:", error);
@@ -80,7 +93,7 @@ const EventDetails = () => {
     };
 
     fetchEvent();
-  }, [eventId]);
+  }, [eventId , isRegistered , isWithdrawn , waitlistPosition ]);
 
   const toggleFavorite = async (e) => {
     e.preventDefault();
@@ -128,6 +141,12 @@ const EventDetails = () => {
   };
 
   const handleWithdraw = async () => {
+    // Check if the user is already withdrawn
+    if (waitlistPosition === -1) {
+      alert("You have already withdrawn from the event.");
+      return;
+    }
+  
     try {
       await axios.post(
         `${API_URL}/events/${eventId}/withdraw`,
@@ -152,6 +171,10 @@ const EventDetails = () => {
       </div>
     );
   }
+  console.log("event", event);
+  console.log("isRegistered", isRegistered);
+  console.log("waitlistPosition", waitlistPosition);
+  
 
   if (error) {
     return (
@@ -264,27 +287,29 @@ const EventDetails = () => {
             </Card>
           </div>
 
-          <div className="flex justify-end mt-4">
-            {isRegistered ? (
-              <>
-                <Button variant="outline" onClick={handleWithdraw}>
-                  Withdraw
-                </Button>
-              </>
-            ) : waitlistPosition !== null ? (
-              <Button variant="outline" disabled>
-                Waitlisted
-              </Button>
-            ) : event.participantsCount >= event.capacity ? (
-              <Button onClick={handleJoinWaitlist}>
-                Join Waitlist
-              </Button>
-            ) : (
-              <Button onClick={handleRegister}>
-                Register Now
-              </Button>
-            )}
-          </div>
+                  <div className="flex justify-end mt-4">
+          {isRegistered ? (
+            <Button variant="outline" onClick={handleWithdraw}>
+              Withdraw
+            </Button>
+          ) : waitlistPosition !== null ? (
+            <Button variant="outline" disabled>
+              Waitlisted
+            </Button>
+          ) : isWithdrawn ? ( // Check if the user has withdrawn
+            <Button variant="outline" disabled>
+              Cannot Register (Withdrawn)
+            </Button>
+          ) : event.participantsCount >= event.capacity ? (
+            <Button onClick={handleJoinWaitlist}>
+              Join Waitlist
+            </Button>
+          ) : (
+            <Button onClick={handleRegister}>
+              Register Now
+            </Button>
+          )}
+        </div>
         </CardContent>
       </Card>
     </div>
