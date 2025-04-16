@@ -154,21 +154,21 @@ const MainLayout = () => {
           <div className="p-4 border-t space-y-4">
             {!loading ? (
               currentUser && (
-                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-sm font-bold uppercase text-purple-600">
-                    {currentUser.name?.charAt(0) || "A"}
-                  </div>
-                  {sidebarOpen && (
-                    <div className="flex-1">
-                      <p className="font-medium text-sm truncate">
-                        {currentUser.name || "Admin User"}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {currentUser.email}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors transform hover:scale-105 shadow-md">
+  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-sm font-bold uppercase text-purple-600">
+    {currentUser .name?.charAt(0) || "A"}
+  </div>
+  {sidebarOpen && (
+    <div className="flex-1">
+      <p className="font-medium text-sm truncate">
+        {currentUser .name || "Admin User"}
+      </p>
+      <p className="text-xs text-gray-500 truncate">
+        {currentUser .email}
+      </p>
+    </div>
+  )}
+</div>
               )
             ) : (
               <div className="h-10 bg-gray-200 rounded animate-pulse" />
@@ -210,32 +210,8 @@ const MainLayout = () => {
 
             <div className="flex items-center space-x-3">
               {/* Search */}
-              <div
-                className={`relative transition-all duration-300 ${
-                  searchActive ? "w-64" : "w-8"
-                }`}
-              >
-                <button
-                  className="p-2 rounded-full hover:bg-gray-100"
-                  onClick={() => setSearchActive(!searchActive)}
-                >
-                  {searchActive ? (
-                    <X className="h-5 w-5" />
-                  ) : (
-                    <Search className="h-5 w-5" />
-                  )}
-                </button>
-                {searchActive && (
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="absolute inset-0 pl-10 pr-4 py-2 bg-gray-100 rounded-full outline-none"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoFocus
-                  />
-                )}
-              </div>
+              
+           
 
               {/* Notifications */}
               <button className="p-2 rounded-full hover:bg-gray-100 relative">
