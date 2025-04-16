@@ -13,7 +13,7 @@ import Favorites from "../admin/pages/Favorites";
 import UserMainLayout from "./layout/UserMainLayout";
 import RegisteredEvents from "./pages/RegisteredEvents";
 import UserProfile from "../admin/pages/UserProfile";
-
+import ContactAdmin from "./pages/ContactAdmin";
 // Protected route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -87,6 +87,7 @@ function AppAdmin() {
               <Route path="favorites" element={<Favorites />} />
               <Route path="registeredEvents" element={<RegisteredEvents />} />
               <Route path="/profile" element={<UserProfile/>} />
+              <Route path="/contact-admin" element={<ContactAdmin/>}/>
             </>
           )}
         </Route>

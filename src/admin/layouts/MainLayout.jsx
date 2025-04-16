@@ -13,6 +13,7 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button"
@@ -59,6 +60,11 @@ const MainLayout = () => {
       label: "Favorites",
       path: "/favorites",
     },
+    {
+      icon:<User className="h-5 w-5" />,
+      label:"Client Queries",
+      path:"/client-queries"
+    }
   ];
 
   const NavItem = ({ icon, label, path, function: onClick }) =>

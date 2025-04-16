@@ -1,3 +1,4 @@
+// EventDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -21,6 +22,7 @@ import { Separator } from "../components/ui/separator";
 import { formatDateTime } from "../../admin/utils/cn";
 import { API_URL } from "../../admin/config/constants";
 import { Button } from "../components/ui/button";
+import { sendAutoReplyEmail } from "../../admin/utils/emailSender"; // Import email sending function
 
 const EventDetails = () => {
   const { eventId } = useParams();
@@ -113,13 +115,32 @@ const EventDetails = () => {
 
   const handleRegister = async () => {
     try {
+      // Make registration request
       await axios.post(
         `${API_URL}/events/${eventId}/register`,
         {},
         { withCredentials: true }
       );
+
+      // Fetch user details to get name and email
+      const userResponse = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
+      const user = userResponse.data;
+  
       setIsRegistered(true);
       alert("Registration successful!");
+
+            // Send confirmation email
+            try {
+              await sendAutoReplyEmail({
+                  toName: user.name, // Assuming the user object has a name property
+                  toEmail: user.email, // Assuming the user object has an email property
+                  eventName: event.title, // Event title
+              });
+              console.log('Confirmation email sent successfully!');
+          } catch (emailError) {
+              console.error('Failed to send confirmation email:', emailError);
+              alert("Failed to send confirmation email. Please check console for details.");
+          }
     } catch (error) {
       console.error("Registration failed:", error);
       alert("Failed to register for the event. Please try again.");
@@ -255,7 +276,6 @@ const EventDetails = () => {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="border shadow-sm">
               <CardHeader className="py-2 sm:py-3">
                 <CardTitle className="text-sm sm:text-base">

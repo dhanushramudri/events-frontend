@@ -187,7 +187,7 @@ const EventCard = ({ event  , eventId }) => {
 
       <CardFooter className="pt-2 flex gap-2">
         <Link to={`/events/${event._id}`} className="flex-1">
-          <Button variant="outline" className="w-full">
+          <Button variant="primary" className="w-full">
             View Details
           </Button>
         </Link>

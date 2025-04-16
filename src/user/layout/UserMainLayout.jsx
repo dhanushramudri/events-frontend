@@ -55,6 +55,11 @@ const UserMainLayout = () => {
       label: "Favorites",
       path: "/favorites",
     },
+    {
+      icon: <User className="h-5 w-5" />, // Icon for Profile
+      label:"Contact Admin",
+      path:"/contact-admin"
+    }
   ];
 
   const NavItem = ({ icon, label, path, function: onClick }) =>

@@ -17,6 +17,8 @@ import AuthForm from "./pages/AuthForm";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
 import UserProfile from "./pages/UserProfile";
+import ClientQueries from "./pages/ClientQueries"; 
+import { ToastContainer } from "react-toastify";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -94,6 +96,7 @@ function AppAdmin() {
               <Route path="events/new" element={<CreateEvent />} />
               <Route path="favorites" element={<Favorites />} />
               <Route path="/profile" element={<UserProfile/>}/>
+              <Route path="/client-queries" element={<ClientQueries/>}/>
               <Route
                 path="events/:eventId/participants"
                 element={<Participants />}

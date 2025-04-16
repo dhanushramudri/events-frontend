@@ -170,7 +170,7 @@ const Events = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h3 className="text-2xl font-semibold text-center">All Events</h3>
         <div className="flex gap-2 self-start sm:self-auto">
-          <Button size="sm" onClick={refreshEvents} className="text-gray-600">
+          <Button variant="white" size="sm" onClick={refreshEvents} className="text-gray-600">
             Refresh
           </Button>
           <Button onClick={handleCreateEvent} size="sm">
