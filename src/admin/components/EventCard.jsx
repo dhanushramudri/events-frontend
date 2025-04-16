@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 const EventCard = ({ event  }) => {
   // console.log("event", event);
   const [isFavorite, setIsFavorite] = useState(false);
+  const role = localStorage.getItem("role")
 
   useEffect(() => {
     // Check if event is favorited by current user
@@ -193,11 +194,16 @@ const EventCard = ({ event  }) => {
             View Details
           </Button>
         </Link>
-        <Link to={`/events/${event._id}/participants`} className="flex-1">
-          <Button variant="secondary" className="w-full">
-            Participants
-          </Button>
-        </Link>
+        {role==="admin" && (
+           <Link to={`/events/${event._id}/participants`} className="flex-1">
+       
+           <Button variant="secondary" className="w-full">
+             Participants
+           </Button>
+         </Link>
+        )
+          }
+       
       </CardFooter>
 
     </Card>

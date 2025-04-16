@@ -29,6 +29,7 @@ const EventDetails = () => {
   const [error, setError] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [waitlistPosition, setWaitlistPosition] = useState(null);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -65,21 +66,19 @@ const EventDetails = () => {
         const res = await axios.get(`${API_URL}/user/participants`, {
           withCredentials: true,
         });
-        console.log("res is ", res.data.participants);
-    
-        // Use map to iterate through participants and check registration status
-        const registered = res.data.participants.map((participant) => {
-          return participant.eventId._id === eventId;
-        }).includes(true); // Check if any of the results are true
-    
+        const registered = res.data.participants.some(participant => participant.eventId._id === eventId);
         setIsRegistered(registered);
+
+        // Check if the user is on the waitlist
+        const waitlistParticipant = res.data.participants.find(participant => participant.eventId._id === eventId && participant.queuePosition);
+        if (waitlistParticipant) {
+          setWaitlistPosition(waitlistParticipant.queuePosition);
+        }
       } catch (error) {
         console.error("Error checking registration status:", error);
       }
     };
-    
-    // Log the registration status
-    console.log("registered status is", isRegistered);
+
     fetchEvent();
   }, [eventId]);
 
@@ -240,25 +239,34 @@ const EventDetails = () => {
                     {event.autoApprove ? "Yes" : "No"}
                   </Badge>
                 </div>
+                {waitlistPosition !== null && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-medium">Waitlist Position:</span>
+                    <Badge variant="secondary">{waitlistPosition}</Badge>
+                  </div >)}
               </CardContent>
             </Card>
           </div>
 
-          <div className="flex justify-end mt-4">
-            {isRegistered ? (
-              <Button variant="outline" disabled>
-                Registered
-              </Button>
-            ) : event.participantsCount >= event.capacity ? (
-              <Button onClick={handleJoinWaitlist}>
-                Join Waitlist
-              </Button>
-            ) : (
-              <Button onClick={handleRegister}>
-                Register Now
-              </Button>
-            )}
-          </div>
+         <div className="flex justify-end mt-4">
+  {isRegistered ? (
+    <Button variant="outline" disabled>
+      Registered
+    </Button>
+  ) : waitlistPosition !== null ? ( // Check if the user is waitlisted
+    <Button variant="outline" disabled>
+      Waitlisted
+    </Button>
+  ) : event.participantsCount >= event.capacity ? (
+    <Button onClick={handleJoinWaitlist}>
+      Join Waitlist
+    </Button>
+  ) : (
+    <Button onClick={handleRegister}>
+      Register Now
+    </Button>
+  )}
+</div>
         </CardContent>
       </Card>
     </div>

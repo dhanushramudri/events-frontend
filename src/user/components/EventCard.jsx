@@ -18,8 +18,8 @@ import { API_URL } from "../../admin/config/constants";
 import toast from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 
-const EventCard = ({ event  }) => {
-  // console.log("event", event);
+const EventCard = ({ event  , eventId }) => {
+
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {

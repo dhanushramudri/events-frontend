@@ -11,6 +11,7 @@ import AuthForm from "../admin/pages/AuthForm";
 import { AuthProvider, useAuth } from "../admin/contexts/AuthContext";
 import Favorites from "../admin/pages/Favorites";
 import UserMainLayout from "./layout/UserMainLayout";
+import RegisteredEvents from "./pages/RegisteredEvents";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -83,6 +84,7 @@ function AppAdmin() {
               <Route path="/" element={<Events />} />
               <Route path="events/:eventId" element={<EventDetails />} />
               <Route path="favorites" element={<Favorites />} />
+              <Route path="registeredEvents" element={<RegisteredEvents />} />
             </>
           )}
         </Route>
