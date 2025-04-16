@@ -1,12 +1,12 @@
 // utils/emailSender.js
 import emailjs from "@emailjs/browser";
 
-const SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-const TEMPLATE_ID_NOTIFICATION =
-  process.env.REACT_APP_EMAILJS_TEMPLATE_ID_NOTIFICATION;
-const TEMPLATE_ID_AUTOREPLY =
-  process.env.REACT_APP_EMAILJS_TEMPLATE_ID_AUTOREPLY;
-const USER_ID = process.env.REACT_APP_EMAILJS_USER_ID;
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID_NOTIFICATION = import.meta.env
+  .VITE_EMAILJS_TEMPLATE_ID_NOTIFICATION;
+const TEMPLATE_ID_AUTOREPLY = import.meta.env
+  .VITE_EMAILJS_TEMPLATE_ID_AUTOREPLY;
+const USER_ID = import.meta.env.VITE_EMAILJS_USER_ID;
 
 export const sendNotificationEmail = async ({
   toName,

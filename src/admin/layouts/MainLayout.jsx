@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, NavLink, useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  Outlet,
+  NavLink,
+  useNavigate,
+  useLocation,
+  Link,
+} from "react-router-dom";
 import {
   Menu,
   X,
@@ -16,7 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { Button } from "../components/ui/button"
+import { Button } from "../components/ui/button";
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -61,10 +67,10 @@ const MainLayout = () => {
       path: "/favorites",
     },
     {
-      icon:<User className="h-5 w-5" />,
-      label:"Client Queries",
-      path:"/client-queries"
-    }
+      icon: <User className="h-5 w-5" />,
+      label: "Client Queries",
+      path: "/client-queries",
+    },
   ];
 
   const NavItem = ({ icon, label, path, function: onClick }) =>
@@ -72,20 +78,20 @@ const MainLayout = () => {
       <NavLink
         to={path}
         className={({ isActive }) =>
-          `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+          `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-[#ff6196] ${
             isActive
-              ? "bg-white  text-[#ff6196] font-semibold"
-              : "hover:bg-gray-100 text-gray-700"
+              ? "bg-[#19105b] text-white font-semibold"
+              : "hover:bg-[#A9A1ED] hover:text-white text-gray-700"
           }`
         }
         onClick={() => setMobileSidebar(false)}
       >
         {icon}
-        {sidebarOpen && <span className="text-[#ff6196]">{label}</span>}
+        {sidebarOpen && <span>{label}</span>}
       </NavLink>
     ) : (
       <Button
-      variant="primary"
+        variant="primary"
         onClick={onClick}
         // className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
       >
@@ -137,19 +143,19 @@ const MainLayout = () => {
 
             {/* Collapse/Expand Button - Moved here */}
             <div className="absolute top-16 right-[-30px] mt-4 mr-4">
-                <Button
-                  variant="ghost"
-                  size={sidebarOpen ? "icon" : "md"} // Use "icon" for small size when sidebar is open, "md" otherwise
-                  className={`bg-blue-100 border-t border-l border-b border-blue-600 text-blue-800 hover:bg-blue-200 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1)] p-0`} // Set padding to 0
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                >
-                  {sidebarOpen ? (
-                    <ChevronLeft className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size={sidebarOpen ? "icon" : "md"} // Use "icon" for small size when sidebar is open, "md" otherwise
+                className={`bg-blue-100 border-t border-l border-b border-blue-600 text-blue-800 hover:bg-blue-200 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1)] p-0`} // Set padding to 0
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? (
+                  <ChevronLeft className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
             {/* Remaining navigation items */}
             {navItems.slice(1).map((item, index) => (
               <NavItem key={item.path || index} {...item} />
@@ -161,20 +167,20 @@ const MainLayout = () => {
             {!loading ? (
               currentUser && (
                 <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors transform hover:scale-105 shadow-md">
-  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-sm font-bold uppercase text-purple-600">
-    {currentUser .name?.charAt(0) || "A"}
-  </div>
-  {sidebarOpen && (
-    <div className="flex-1">
-      <p className="font-medium text-sm truncate">
-        {currentUser .name || "Admin User"}
-      </p>
-      <p className="text-xs text-gray-500 truncate">
-        {currentUser .email}
-      </p>
-    </div>
-  )}
-</div>
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-sm font-bold uppercase text-purple-600">
+                    {currentUser.name?.charAt(0) || "A"}
+                  </div>
+                  {sidebarOpen && (
+                    <div className="flex-1">
+                      <p className="font-medium text-sm truncate">
+                        {currentUser.name || "Admin User"}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {currentUser.email}
+                      </p>
+                    </div>
+                  )}
+                </div>
               )
             ) : (
               <div className="h-10 bg-gray-200 rounded animate-pulse" />
@@ -216,8 +222,6 @@ const MainLayout = () => {
 
             <div className="flex items-center space-x-3">
               {/* Search */}
-              
-           
 
               {/* Notifications */}
               <button className="p-2 rounded-full hover:bg-gray-100 relative">
@@ -228,11 +232,11 @@ const MainLayout = () => {
               {/* Avatar */}
               <div>
                 <Link to="/profile" className="flex items-center">
-                <button className="flex items-center p-2 rounded-full hover:bg-gray-100">
-                  <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-100 text-xs font-bold uppercase text-purple-600">
-                    {currentUser?.name?.charAt(0) || "A"}
-                  </div>
-                </button>
+                  <button className="flex items-center p-2 rounded-full hover:bg-gray-100">
+                    <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-100 text-xs font-bold uppercase text-purple-600">
+                      {currentUser?.name?.charAt(0) || "A"}
+                    </div>
+                  </button>
                 </Link>
               </div>
             </div>

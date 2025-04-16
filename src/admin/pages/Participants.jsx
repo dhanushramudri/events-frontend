@@ -45,8 +45,6 @@ const Participants = () => {
     fetchEventDetails();
   }, [eventId]);
 
-
-
   const fetchEventDetails = async () => {
     try {
       const res = await axios.get(
@@ -85,7 +83,9 @@ const Participants = () => {
       const grouped = {
         approved: all.filter((p) => p.status === "approved"),
         pending: all.filter((p) => p.status === "pending"),
-        rejected: all.filter((p) => p.status === "rejected" || p.status === "withdrawn"),
+        rejected: all.filter(
+          (p) => p.status === "rejected" || p.status === "withdrawn"
+        ),
       };
 
       setGroupedUsers(grouped);
@@ -126,7 +126,7 @@ const Participants = () => {
     }
   };
 
-  const rejectUser  = async (userId) => {
+  const rejectUser = async (userId) => {
     try {
       // Check if the current time is within 12 hours of registration closing
       const currentTime = new Date();
@@ -134,22 +134,24 @@ const Participants = () => {
       const timeDifference = registrationCloseTime - currentTime; // in milliseconds
       console.log("time difference", timeDifference);
       const twelveHoursInMilliseconds = 12 * 60 * 60 * 1000; // 12 hours
-  
+
       if (timeDifference <= twelveHoursInMilliseconds) {
         console.log("time difference", timeDifference);
         console.log("current time", currentTime);
         console.log("registration close time", registrationCloseTime);
-        toast.error("You cannot reject a user within 12 hours of registration closing.");
+        toast.error(
+          "You cannot reject a user within 12 hours of registration closing."
+        );
         alert("Cannot reject user within 12 hours of registration closing.");
         return; // Exit the function if within 12 hours
       }
-  
+
       // Step 1: Reject the user
       await axios.post(
         `${API_URL}/admin/events/${eventId}/participants/${userId}/reject`
       );
-      toast.success("User  rejected from waitlist.");
-  
+      toast.success("User rejected from waitlist.");
+
       // ✅ Updated user lookup
       const allUsers = [
         ...(groupedUsers.pending || []),
@@ -157,39 +159,40 @@ const Participants = () => {
         ...(groupedUsers.rejected || []),
       ];
       const user = allUsers.find((u) => u._id === userId);
-  
+
       if (user) {
-        await sendDirectEmailToUser ({
+        await sendDirectEmailToUser({
           ...user,
           status: "rejected",
         });
       }
-  
+
       // Step 2: Refetch updated participants list
       const res = await axios.get(
         `${API_URL}/admin/events/${eventId}/participants`
       );
       const all = res.data.participants;
-  
+
       const grouped = {
         approved: all.filter((p) => p.status === "approved"),
         pending: all.filter((p) => p.status === "pending"),
-        rejected: all.filter((p) => p.status === "rejected" || p.status === "withdrawn"),
-        
+        rejected: all.filter(
+          (p) => p.status === "rejected" || p.status === "withdrawn"
+        ),
       };
       setGroupedUsers(grouped); // update the UI too
 
       console.log("Grouped users after rejection:", grouped);
-  
+
       // Step 3: Calculate available slots
       const approvedCount = grouped.approved.length;
       const availableSlots = event.capacity - approvedCount;
       console.log("Available slots:", availableSlots);
-  
+
       // Step 4: Get users to approve from updated pending list
       const usersToApprove = grouped.pending.slice(0, availableSlots);
       console.log("Users to auto-approve:", usersToApprove);
-  
+
       // Step 5: Auto-approve them
       if (usersToApprove.length > 0) {
         const approvalPromises = usersToApprove.map((user) =>
@@ -202,7 +205,7 @@ const Participants = () => {
       } else {
         toast.success("No one in the waitlist to auto-approve.");
       }
-  
+
       // Step 6: Refetch again after approvals
       fetchParticipants();
     } catch (error) {
@@ -210,18 +213,6 @@ const Participants = () => {
       toast.error("Failed to reject user.");
     }
   };
-
-  // const removeUser = async (userId) => {
-  //   try {
-  //     await axios.delete(
-  //       `${API_URL}/admin/events/${eventId}/participants/${userId}`
-  //     );
-  //     toast.success("User removed successfully.");
-  //     fetchParticipants();
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Failed to remove user.");
-  //   }
-  // };
 
   const sendNotification = async () => {
     if (!notificationMessage.trim()) {
@@ -360,25 +351,25 @@ const Participants = () => {
       label: "Registered",
       key: "approved",
       description: "Confirmed participants",
-      color: "bg-green-600",
+      color: "bg-[#19105b]/90",
       textColor: "text-white",
-      iconBg: "bg-green-700",
+      iconBg: "bg-[#19105b]",
     },
     {
       label: "Waitlisted",
       key: "pending",
       description: "In queue for approval",
-      color: "bg-amber-500",
+      color: "bg-[#19105b]/70",
       textColor: "text-white",
-      iconBg: "bg-amber-600",
+      iconBg: "bg-[#19105b]",
     },
     {
       label: "Withdrawn",
-      key: "rejected" ,
+      key: "rejected",
       description: "Removed or cancelled",
-      color: "bg-gray-500",
+      color: "bg-[#19105b]/50",
       textColor: "text-white",
-      iconBg: "bg-gray-600",
+      iconBg: "bg-[#19105b]/80",
     },
   ];
 
@@ -386,11 +377,11 @@ const Participants = () => {
   if (loading) {
     return (
       <Card className="w-full shadow-md">
-        <CardHeader className="bg-blue-50">
-          <CardTitle className="text-blue-800">Participants</CardTitle>
+        <CardHeader className="bg-[#19105b]/10">
+          <CardTitle className="text-[#19105b]">Participants</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#19105b]"></div>
         </CardContent>
       </Card>
     );
@@ -398,14 +389,14 @@ const Participants = () => {
 
   return (
     <Card className="w-full shadow-md">
-      <CardHeader className="bg-blue-50 pb-6">
+      <CardHeader className="bg-[#19105b]/10 pb-6">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 text-white p-2 rounded-full">
+            <div className="bg-[#19105b] text-white p-2 rounded-full">
               <Users className="w-6 h-6" />
             </div>
             <div>
-              <CardTitle className="text-blue-800">
+              <CardTitle className="text-[#ff6196]">
                 Event Participants
               </CardTitle>
               {event && (
@@ -415,13 +406,13 @@ const Participants = () => {
                   </p>
                   <div className="flex flex-wrap gap-x-6 gap-y-1 mt-1">
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold text-blue-700">
+                      <span className="font-semibold text-[#19105b]">
                         {groupedUsers.approved.length}/{event.capacity}
                       </span>{" "}
                       registered
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold text-amber-600">
+                      <span className="font-semibold text-[#ff6196]">
                         {groupedUsers.pending.length}
                       </span>{" "}
                       on waitlist
@@ -445,7 +436,7 @@ const Participants = () => {
             <Button
               variant="outline"
               onClick={exportParticipantsList}
-              className="bg-white hover:bg-gray-50 border-gray-300"
+              className="bg-white hover:bg-gray-50 border-[#19105b]/30 text-[#19105b] hover:text-[#19105b]/80"
             >
               <Download className="w-4 h-4 mr-2" /> Export CSV
             </Button>
@@ -455,50 +446,48 @@ const Participants = () => {
 
       <CardContent className="space-y-8 p-4 sm:p-6">
         {/* Notification Section */}
-        <div className="border p-4 rounded-lg bg-blue-50 border-blue-200 shadow-sm">
-          <h3 className="text-lg font-semibold mb-3 text-blue-800 flex items-center">
+        <div className="border p-4 rounded-lg bg-white border-[#19105b]/20 shadow-sm">
+          <h3 className="text-lg font-semibold mb-3 text-[#19105b] flex items-center">
             <Mail className="w-5 h-5 mr-2" />
             Send Notification
           </h3>
           <div className="flex flex-wrap gap-2 mb-3">
             <Button
-              variant={
-                notificationTarget === "selected" ? "default" : "outline"
-              }
+              variant="secondary"
               onClick={() => setNotificationTarget("selected")}
               className={
                 notificationTarget === "selected"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : ""
+                  ? "bg-[#ff6196] hover:bg-[#ff6196]/90 text-white"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700"
               }
             >
               Selected
             </Button>
             <Button
-              variant={notificationTarget === "status" ? "default" : "outline"}
+              variant="secondary"
               onClick={() => setNotificationTarget("status")}
               className={
                 notificationTarget === "status"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : ""
+                  ? "bg-[#ff6196] hover:bg-[#ff6196]/90 text-white"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700"
               }
             >
               By Status
             </Button>
             <Button
-              variant={notificationTarget === "all" ? "default" : "outline"}
+              variant="secondary"
               onClick={() => setNotificationTarget("all")}
               className={
                 notificationTarget === "all"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : ""
+                  ? "bg-[#19105b] hover:bg-[#19105b]/90 text-white"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700"
               }
             >
               All
             </Button>
             {notificationTarget === "status" && (
               <select
-                className="border px-3 py-2 rounded-md bg-white"
+                className="border px-3 py-2 rounded-md bg-white border-gray-300 focus:border-[#19105b] focus:ring-1 focus:ring-[#19105b] outline-none"
                 value={targetStatus}
                 onChange={(e) => setTargetStatus(e.target.value)}
               >
@@ -509,7 +498,7 @@ const Participants = () => {
             )}
           </div>
           <textarea
-            className="w-full p-3 border rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full p-3 border rounded-md border-gray-300 focus:ring-2 focus:ring-[#19105b]/40 focus:border-[#19105b] outline-none"
             rows="4"
             placeholder="Enter notification message..."
             value={notificationMessage}
@@ -519,7 +508,7 @@ const Participants = () => {
             <Button
               onClick={sendNotification}
               disabled={sendingNotification}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-[#ff6196] text-white hover:bg-[#ff6196]/90"
             >
               {sendingNotification ? "Sending..." : "Send Notification"}
             </Button>
@@ -531,7 +520,7 @@ const Participants = () => {
           ({ key, label, description, color, textColor, iconBg }) => (
             <div
               key={key}
-              className="border rounded-lg shadow-sm overflow-hidden"
+              className="border rounded-lg shadow-sm overflow-hidden border-[#19105b]/10"
             >
               <div
                 className={`${color} ${textColor} p-3 flex justify-between items-center`}
@@ -556,7 +545,7 @@ const Participants = () => {
                           type="checkbox"
                           checked={selectedUsers.includes(user._id)}
                           onChange={() => toggleSelectUser(user._id)}
-                          className="h-4 w-4"
+                          className="h-4 w-4 accent-[#ff6196]"
                         />
                         <div>
                           <span className="font-medium">{user.name}</span>
@@ -584,28 +573,21 @@ const Participants = () => {
                             title="Approve"
                             className="p-1 hover:bg-green-100 rounded"
                           >
-                            <Check className="text-green-600 w-5 h-5" />
+                            <Check className="text-[#19105b] w-5 h-5" />
                           </button>
                           <button
                             onClick={() => rejectUser(user._id)}
                             title="Reject"
                             className="p-1 hover:bg-red-100 rounded"
                           >
-                            <X className="text-red-600 w-5 h-5" />
+                            <X className="text-[#ff6196] w-5 h-5" />
                           </button>
-                          {/* <button
-                            onClick={() => removeUser(user._id)}
-                            title="Remove"
-                            className="p-1 hover:bg-red-100 rounded"
-                          >
-                            <Trash className="text-red-600 w-5 h-5" />
-                          </button> */}
                           <button
                             onClick={() => sendDirectEmailToUser(user)}
                             title="Email"
                             className="p-1 hover:bg-blue-100 rounded"
                           >
-                            <Mail className="text-blue-600 w-5 h-5" />
+                            <Mail className="text-[#19105b] w-5 h-5" />
                           </button>
                         </div>
                       </div>
@@ -622,13 +604,13 @@ const Participants = () => {
         )}
       </CardContent>
 
-      <CardFooter className="bg-gray-50 p-4 border-t">
+      <CardFooter className="bg-[#19105b]/5 p-4 border-t">
         <Link to="/events">
           <Button
             variant="outline"
-            className="hover:bg-blue-50 border-blue-300"
+            className="hover:bg-[#19105b]/10 border-[#19105b]/30 text-[#19105b]"
           >
-            <ArrowRightCircle className="w-4 h-4 mr-2 text-blue-600" />
+            <ArrowRightCircle className="w-4 h-4 mr-2 text-[#19105b]" />
             Back to Event Details
           </Button>
         </Link>
@@ -640,9 +622,9 @@ const Participants = () => {
 const getStatusColor = (status) => {
   switch (status) {
     case "approved":
-      return "text-green-600 font-medium";
+      return "text-[#19105b] font-medium";
     case "pending":
-      return "text-amber-600 font-medium";
+      return "text-[#ff6196] font-medium";
     case "rejected":
       return "text-gray-500 font-medium";
     default:
@@ -653,9 +635,9 @@ const getStatusColor = (status) => {
 const getStatusBadgeColor = (status) => {
   switch (status) {
     case "approved":
-      return "bg-green-100 text-green-800";
+      return "bg-[#19105b]/20 text-[#19105b]";
     case "pending":
-      return "bg-amber-100 text-amber-800";
+      return "bg-[#ff6196]/20 text-[#ff6196]";
     case "rejected":
       return "bg-gray-100 text-gray-800";
     default:
