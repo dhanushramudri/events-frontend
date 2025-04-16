@@ -127,6 +127,21 @@ const EventDetails = () => {
     }
   };
 
+  const handleWithdraw = async () => {
+    try {
+      await axios.post(
+        `${API_URL}/events/${eventId}/withdraw`,
+        {},
+        { withCredentials: true }
+      );
+      setIsRegistered(false);
+      alert("You have successfully withdrawn from the event.");
+    } catch (error) {
+      console.error("Withdrawal failed:", error);
+      alert("Failed to withdraw from the event. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-60">
@@ -230,7 +245,7 @@ const EventDetails = () => {
                   <span>{`${event.capacity} participants`}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w- 4 h-4" />
                   <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)}`}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -243,30 +258,33 @@ const EventDetails = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-base font-medium">Waitlist Position:</span>
                     <Badge variant="secondary">{waitlistPosition}</Badge>
-                  </div >)}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
-         <div className="flex justify-end mt-4">
-  {isRegistered ? (
-    <Button variant="outline" disabled>
-      Registered
-    </Button>
-  ) : waitlistPosition !== null ? ( // Check if the user is waitlisted
-    <Button variant="outline" disabled>
-      Waitlisted
-    </Button>
-  ) : event.participantsCount >= event.capacity ? (
-    <Button onClick={handleJoinWaitlist}>
-      Join Waitlist
-    </Button>
-  ) : (
-    <Button onClick={handleRegister}>
-      Register Now
-    </Button>
-  )}
-</div>
+          <div className="flex justify-end mt-4">
+            {isRegistered ? (
+              <>
+                <Button variant="outline" onClick={handleWithdraw}>
+                  Withdraw
+                </Button>
+              </>
+            ) : waitlistPosition !== null ? (
+              <Button variant="outline" disabled>
+                Waitlisted
+              </Button>
+            ) : event.participantsCount >= event.capacity ? (
+              <Button onClick={handleJoinWaitlist}>
+                Join Waitlist
+              </Button>
+            ) : (
+              <Button onClick={handleRegister}>
+                Register Now
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
