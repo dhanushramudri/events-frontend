@@ -15,11 +15,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../admin/components/ui/card";
-import { Badge } from "../../admin/components/ui/badge";
-import { Separator } from "../../admin/components/ui/separator";
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
 import { formatDateTime } from "../../admin/utils/cn";
 import { API_URL } from "../../admin/config/constants";
+import { Button } from "../components/ui/button";
 
 const EventDetails = () => {
   const { eventId } = useParams();
@@ -27,23 +28,9 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
-
-    const checkFavorite = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/events/favorites/check/${eventId}`,
-          {
-            withCredentials: true,
-          }
-        );
-        setIsFavorite(res.data.isFavorite);
-      } catch (error) {
-        console.error("Error checking favorite status:", error);
-      }
-    };
-    checkFavorite();
     const fetchEvent = async () => {
       try {
         const res = await axios.get(`${API_URL}/events/${eventId}`);
@@ -52,22 +39,88 @@ const EventDetails = () => {
           return;
         }
         setEvent(res.data.event);
-
-        const favRes = await axios.get(
-          `${API_URL}/events/favorites/`,
-          {
-            withCredentials: true,
-          }
-        );
-        setIsFavorite(favRes.data.isFavorite);
+        checkFavoriteStatus();
+        checkRegistrationStatus();
       } catch {
         setError("Failed to fetch event details.");
       } finally {
         setLoading(false);
       }
     };
+
+    const checkFavoriteStatus = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/events/favorites/check/${eventId}`,
+          { withCredentials: true }
+        );
+        setIsFavorite(res.data.isFavorite);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+
+    const checkRegistrationStatus = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/user/participants`, {
+          withCredentials: true,
+        });
+        const registered = res.data.participants.some(
+          (participant) => participant.eventId === eventId
+        );
+        setIsRegistered(registered);
+      } catch (error) {
+        console.error("Error checking registration status:", error);
+      }
+    };
+
     fetchEvent();
   }, [eventId]);
+
+  const toggleFavorite = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const endpoint = isFavorite
+      ? `${API_URL}/users/favorites/remove/${eventId}`
+      : `${API_URL}/users/favorites/add/${eventId}`;
+
+    try {
+      await axios.post(endpoint, {}, { withCredentials: true });
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Failed to update favorite status", error);
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      await axios.post(
+        `${API_URL}/events/${eventId}/register`,
+        {},
+        { withCredentials: true }
+      );
+      setIsRegistered(true);
+      alert("Registration successful!");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      alert("Failed to register for the event. Please try again.");
+    }
+  };
+
+  const handleJoinWaitlist = async () => {
+    try {
+      await axios.post(
+        `${API_URL}/events/${eventId}/waitlist`,
+        {},
+        { withCredentials: true }
+      );
+      alert("Joined waitlist!");
+    } catch (error) {
+      console.error("Waitlist join failed:", error);
+      alert("Failed to join the waitlist. Please try again.");
+    }
+  };
 
   if (loading) {
     return (
@@ -111,8 +164,8 @@ const EventDetails = () => {
 
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white rounded-full p-2 shadow-lg">
             <Heart
-              className={`w - 4 h - 4 sm: w - 5 sm: h - 5 ${isFavorite ? "fill-red-500 text-red-500" : "text-blue-500"
-                }`}
+              onClick={toggleFavorite}
+              className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-blue-500"}`}
             />
           </div>
         </div>
@@ -173,8 +226,7 @@ const EventDetails = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)
-                    }`}</span>
+                  <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)}`}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-base font-medium">Auto-Approve:</span>
@@ -184,6 +236,22 @@ const EventDetails = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="flex justify-end mt-4">
+            {isRegistered ? (
+              <Button variant="outline" disabled>
+                Registered
+              </Button>
+            ) : event.participantsCount >= event.capacity ? (
+              <Button onClick={handleJoinWaitlist}>
+                Join Waitlist
+              </Button>
+            ) : (
+              <Button onClick={handleRegister}>
+                Register Now
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
