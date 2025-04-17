@@ -2,17 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EventCard from "../components/EventCard";
 import { API_URL } from "../../admin/config/constants";
-import EventFilters from "../components/EventFilters"; // Import EventFilters
-import { Filter } from "lucide-react"; // Import Filter icon
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false); // State to manage filter visibility
-  const [filter, setFilter] = useState({
-    category: "all",
-    status: "upcoming",
-  });
 
   const fetchFavorites = async () => {
     try {
@@ -32,30 +25,9 @@ const Favorites = () => {
     fetchFavorites();
   }, []);
 
-  // Filter favorites based on the current filter state
-  const filteredFavorites = favorites.filter((event) => {
-    const matchesCategory = filter.category === "all" || event.category === filter.category;
-    const matchesStatus = filter.status === "all" || event.status === filter.status;
-    return matchesCategory && matchesStatus;
-  });
-
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">My Favorite Events</h1>
-
-      <div className="flex justify-between items-center mb-4">
-        {/* Filter Icon */}
-        <button
-          onClick={() => setShowFilters((prev) => !prev)}
-          className="p-2 rounded-full hover:bg-gray-200 transition-all"
-        >
-          <Filter className="w-5 h-5 text-gray-500 cursor-pointer" />
-        </button>
-      </div>
-
-      {showFilters && (
-        <EventFilters filter={filter} setFilter={setFilter} />
-      )}
+      <h2 className="text-2xl font-semibold mb-4">My Favorite Events</h2>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -72,13 +44,13 @@ const Favorites = () => {
             </div>
           ))}
         </div>
-      ) : filteredFavorites.length === 0 ? (
+      ) : favorites.length === 0 ? (
         <div className="text-center text-gray-500 mt-4">
           No favorite events found.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredFavorites.map((event) => (
+          {favorites.map((event) => (
             <EventCard key={event._id} event={event} />
           ))}
         </div>
