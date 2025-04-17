@@ -7,6 +7,8 @@ import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import axios from "axios";
 import { API_URL } from "../../admin/config/constants";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/toast";
 
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -20,9 +22,6 @@ const EventCard = ({ event }) => {
           { withCredentials: true }
         );
         setIsFavorite(response.data.isFavorite);
-        toast.success(
-          `Event ${response.data.isFavorite ? "added to" : "removed from"} favorites`
-        );
       } catch (err) {
         console.error("Failed to check favorite status", err);
       }
@@ -42,10 +41,9 @@ const EventCard = ({ event }) => {
 
       await axios.post(endpoint, {}, { withCredentials: true });
       setIsFavorite(!isFavorite);
-      // toast.success(
-      //   `Event ${isFavorite ? "removed from" : "added to"} favorites`
-      // );
+      handleSuccess(`Event ${isFavorite ? "removed from" : "added to"} favorites`);
     } catch (err) {
+      handleError("Failed to update favorite status", err);
       console.error("Failed to update favorite status", err);
     }
   };
@@ -78,6 +76,7 @@ const EventCard = ({ event }) => {
 
   return (
     <Card className="overflow-hidden hover:shadow-lg w-100">
+      <ToastContainer />
       <div className="relative">
         <img
           src={imageUrl}
@@ -97,7 +96,7 @@ const EventCard = ({ event }) => {
       </div>
       <CardHeader className="px-4 py-3">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-xl font-semibold text-gray-800">{event.title}</CardTitle>
+          < CardTitle className="text-xl font-semibold text-gray-800">{event.title}</CardTitle>
           <span
             className={`${getStatusColor(event.status)} px-3 py-1 rounded-full text-xs font-medium`}
           >
