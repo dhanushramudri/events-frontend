@@ -22,6 +22,9 @@ import { Button } from "../components/ui/button";
 import { sendAutoReplyEmail } from "../../admin/utils/emailSender"; // Import email sending function
 import Countdown from "../components/Countdown"; // Import Countdown Timer
 
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/toast";
+
 const EventDetails = () => {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
@@ -106,7 +109,8 @@ const EventDetails = () => {
       const user = userResponse.data;
 
       setIsRegistered(true);
-      alert("Registration successful!");
+      // alert("Registration successful!");
+      handleSuccess("Registration successful!");
 
       try {
         await sendAutoReplyEmail({
@@ -117,11 +121,13 @@ const EventDetails = () => {
         console.log('Confirmation email sent successfully!');
       } catch (emailError) {
         console.error('Failed to send confirmation email:', emailError);
-        alert("Failed to send confirmation email. Please check console for details.");
+        // alert("Failed to send confirmation email. Please check console for details.");
+        handleError("Failed to send confirmation email. Please check console for details.");
       }
     } catch (error) {
       console.error("Registration failed:", error);
-      alert("Failed to register for the event. Please try again.");
+      // alert("Failed to register for the event. Please try again.");
+      handleError("Failed to register for the event. Please try again.");
     }
   };
 
@@ -133,21 +139,25 @@ const EventDetails = () => {
         { withCredentials: true }
       );
       setWaitlistPosition(event.waitlistCount + 1);
-      alert("You have been added to the waitlist!");
+      // alert("You have been added to the waitlist!");
+      handleSuccess("You have been added to the waitlist!");
     } catch (error) {
       console.error("Waitlist join failed:", error);
-      alert("Failed to join the waitlist. Please try again.");
+      // alert("Failed to join the waitlist. Please try again.");
+      handleError("Failed to join the waitlist. Please try again.");
     }
   };
 
   const handleWithdraw = async () => {
     if (!canWithdraw) {
-      alert("You cannot withdraw within 12 hours of the event.");
+      // alert("You cannot withdraw within 12 hours of the event.");
+      handleError("You cannot withdraw within 12 hours of the event.");
       return;
     }
 
     if (waitlistPosition === -1) {
-      alert("You have already withdrawn from the event.");
+      // alert("You have already withdrawn from the event.");
+      handleError("You have already withdrawn from the event.");
       return;
     }
 
@@ -158,10 +168,12 @@ const EventDetails = () => {
         { withCredentials: true }
       );
       setIsRegistered(false);
-      alert("You have successfully withdrawn from the event.");
+      // alert("You have successfully withdrawn from the event.");
+      handleSuccess("You have successfully withdrawn from the event.");
     } catch (error) {
       console.error("Withdrawal failed:", error);
-      alert("Failed to withdraw from the event. Please try again.");
+      // alert("Failed to withdraw from the event. Please try again.");
+      handleError("Failed to withdraw from the event. Please try again.");
     }
   };
 
@@ -196,6 +208,7 @@ const EventDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-2 sm:p-4">
+      <ToastContainer />
       {/* Countdown Timer Above the Image */}
       <div className="flex justify-between items-center">
         <Countdown targetDate={event.date} />

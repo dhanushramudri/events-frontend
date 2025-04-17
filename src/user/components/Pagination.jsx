@@ -25,7 +25,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           className={`px-5 py-2 border-2 rounded-md text-white 
             ${currentPage === index + 1 
               ? "bg-blue-600 hover:bg-blue-700"
-              : "bg-[19105b] hover:bg-[#4f2a7f]"}`}
+              : "bg-[#19105b] hover:bg-[#4f2a7f]"}`}
         >
           {index + 1}
         </button>
@@ -35,7 +35,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-5 py-2 bg-[19105b] text-white rounded-md hover:bg-[#4f2a7f] transition-all duration-200 disabled:bg-gray-500 cursor-pointer"
+        className="px-5 py-2 bg-[#19105b] text-white rounded-md hover:bg-[#4f2a7f] transition-all duration-200 disabled:bg-gray-500 cursor-pointer"
       >
         Next
       </button>

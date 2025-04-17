@@ -1,35 +1,20 @@
-// Events.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EventCard from "../components/EventCard";
-import {
-  Loader2,
-  PlusCircle,
-  Filter,
-  Search,
-  X,
-  Calendar,
-  MapPin,
-  Tag,
-  Clock,
-} from "lucide-react";
+import { Loader2, PlusCircle, Filter, Search, X, Calendar, MapPin, Tag, Clock } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { API_URL } from "../config/constants";
+import Pagination from "../../user/components/Pagination";
 
 const Events = () => {
   const [allEvents, setAllEvents] = useState([]); // Store all events from initial fetch
   const [filteredEvents, setFilteredEvents] = useState([]); // Store filtered events
+  const [displayedEvents, setDisplayedEvents] = useState([]); // Events for current page
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -41,7 +26,12 @@ const Events = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
-
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eventsPerPage] = useState(9); // Show 9 events per page (3x3 grid)
+  const [totalPages, setTotalPages] = useState(1);
+  
   const navigate = useNavigate();
 
   // Fetch all events only once when component mounts
@@ -67,9 +57,7 @@ const Events = () => {
   // Apply filters on the client side
   useEffect(() => {
     if (allEvents.length === 0) return; // Skip if no events loaded yet
-
     setLoading(true);
-
     // Apply filters to the allEvents array
     let results = [...allEvents];
 
@@ -114,9 +102,29 @@ const Events = () => {
     // Short timeout to simulate loading for better UX
     setTimeout(() => {
       setFilteredEvents(results);
+      // Reset to first page when filters change
+      setCurrentPage(1);
       setLoading(false);
     }, 150);
   }, [search, filter, allEvents]); // Re-run when search, filter, or allEvents change
+
+  // Update pagination when filtered events change
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
+    setTotalPages(totalPages);
+    
+    // Get events for current page
+    const startIndex = (currentPage - 1) * eventsPerPage;
+    const endIndex = startIndex + eventsPerPage;
+    setDisplayedEvents(filteredEvents.slice(startIndex, endIndex));
+  }, [filteredEvents, currentPage, eventsPerPage]);
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     // Count active filters
@@ -174,8 +182,7 @@ const Events = () => {
             Refresh
           </Button>
           <Button onClick={handleCreateEvent} size="sm">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Create Event
+            <PlusCircle className="h-4 w-4 mr-2" /> Create Event
           </Button>
         </div>
       </div>
@@ -195,7 +202,6 @@ const Events = () => {
               />
             </div>
           </div>
-
           <div className="p-4 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Button
@@ -206,10 +212,8 @@ const Events = () => {
                   showFilters ? "bg-blue-50 text-blue-600 border-blue-200" : ""
                 }`}
               >
-                <Filter className="h-4 w-4 mr-2" />
-                Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                <Filter className="h-4 w-4 mr-2" /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
               </Button>
-
               {(activeFiltersCount > 0 || search) && (
                 <Button
                   variant="ghost"
@@ -217,20 +221,17 @@ const Events = () => {
                   onClick={clearFilters}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <X className="h-3.5 w-3.5 mr-1" />
-                  Clear all
+                  <X className="h-3.5 w-3.5 mr-1" /> Clear all
                 </Button>
               )}
             </div>
-
             <div className="flex items-center gap-2 flex-wrap">
               {search && (
                 <Badge
                   variant="outline"
                   className="bg-blue-50 text-blue-600 border-blue-200 px-2 py-1 rounded-md"
                 >
-                  <Search className="h-3 w-3 mr-1" />
-                  {`"${search}"`}
+                  <Search className="h-3 w-3 mr-1" /> {`"${search}"`}
                   <X
                     className="h-3 w-3 ml-1 cursor-pointer"
                     onClick={() => setSearch("")}
@@ -242,8 +243,7 @@ const Events = () => {
                   variant="outline"
                   className="bg-blue-50 text-blue-600 border-blue-200 px-2 py-1 rounded-md"
                 >
-                  <Clock className="h-3 w-3 mr-1" />
-                  {filter.status}
+                  <Clock className="h-3 w-3 mr-1" /> {filter.status}
                   <X
                     className="h-3 w-3 ml-1 cursor-pointer"
                     onClick={() => setFilter({ ...filter, status: "" })}
@@ -255,8 +255,7 @@ const Events = () => {
                   variant="outline"
                   className="bg-purple-50 text-purple-600 border-purple-200 px-2 py-1 rounded-md"
                 >
-                  <Tag className="h-3 w-3 mr-1" />
-                  {filter.category}
+                  <Tag className="h-3 w-3 mr-1" /> {filter.category}
                   <X
                     className="h-3 w-3 ml-1 cursor-pointer"
                     onClick={() => setFilter({ ...filter, category: "" })}
@@ -268,8 +267,7 @@ const Events = () => {
                   variant="outline"
                   className="bg-green-50 text-green-600 border-green-200 px-2 py-1 rounded-md"
                 >
-                  <MapPin className="h-3 w-3 mr-1" />
-                  {filter.location}
+                  <MapPin className="h-3 w-3 mr-1" /> {filter.location}
                   <X
                     className="h-3 w-3 ml-1 cursor-pointer"
                     onClick={() => setFilter({ ...filter, location: "" })}
@@ -281,8 +279,7 @@ const Events = () => {
                   variant="outline"
                   className="bg-amber-50 text-amber-600 border-amber-200 px-2 py-1 rounded-md"
                 >
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {new Date(filter.date).toLocaleDateString()}
+                  <Calendar className="h-3 w-3 mr-1" /> {new Date(filter.date).toLocaleDateString()}
                   <X
                     className="h-3 w-3 ml-1 cursor-pointer"
                     onClick={() => setFilter({ ...filter, date: "" })}
@@ -320,7 +317,6 @@ const Events = () => {
                   </SelectContent>
                 </Select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category
@@ -346,7 +342,6 @@ const Events = () => {
                   </SelectContent>
                 </Select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Location
@@ -357,13 +352,15 @@ const Events = () => {
                     placeholder="Any location"
                     value={filter.location}
                     onChange={(e) =>
-                      setFilter({ ...filter, location: e.target.value.trim() })
+                      setFilter({
+                        ...filter,
+                        location: e.target.value.trim()
+                      })
                     }
                     className="pl-9 w-full"
                   />
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Date
@@ -403,8 +400,8 @@ const Events = () => {
 
       {/* Events List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map((event) => (
+        {displayedEvents.length > 0 ? (
+          displayedEvents.map((event) => (
             <EventCard key={event._id} event={event} />
           ))
         ) : (
@@ -426,12 +423,20 @@ const Events = () => {
               </Button>
             )}
             <Button onClick={handleCreateEvent}>
-              <PlusCircle className="h-4 w-4 mr-2" />
-              Create Event
+              <PlusCircle className="h-4 w-4 mr-2" /> Create Event
             </Button>
           </div>
         )}
       </div>
+      
+      {/* Pagination Component */}
+      {filteredEvents.length > eventsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };
