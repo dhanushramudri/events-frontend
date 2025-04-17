@@ -254,16 +254,16 @@ const LandingPage = () => {
                 <div className="mt-6 pt-6 border-t border-gray-100">
                   <div className="flex justify-between">
                     <div>
-                      <p className="text-sm text-gray-500">Ticket Sales</p>
+                      <p className="text-sm text-gray-500">Users Registered</p>
                       <p className="text-lg font-medium text-gray-800">
                         84% Complete
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">Revenue</p>
+                      {/* <p className="text-sm text-gray-500">Revenue</p>
                       <p className="text-lg font-medium text-gray-800">
                         $419,520
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2.5 mt-2">
@@ -287,7 +287,7 @@ const LandingPage = () => {
         >
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-gray-800 mb-4">
-              Why Choose EventFlow
+              Why Choose JBytes
             </h3>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Our platform offers everything you need to create successful
@@ -432,15 +432,15 @@ const LandingPage = () => {
             Ready to Transform Your Events?
           </h3>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join thousands of event organizers who trust EventFlow to create
+            Join thousands of event organizers who trust JBytes to create
             memorable experiences
           </p>
           <Button
             variant="gradient"
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/login")}
             className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-10 py-4 text-lg"
           >
-            Start Your Free Trial
+            Start Now
           </Button>
         </motion.div>
       </div>
@@ -537,7 +537,7 @@ const LandingPage = () => {
           </div>
           <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-600 mb-4 md:mb-0">
-              © 2025 EventFlow, Inc. All rights reserved.
+              © 2025 JBytes, Inc. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <button className="text-gray-600 hover:text-purple-600">
