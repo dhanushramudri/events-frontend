@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  Heart,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
@@ -62,7 +63,7 @@ const MainLayout = () => {
     },
     { icon: <Users className="h-5 w-5" />, label: "Users", path: "/users" },
     {
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Heart className="h-5 w-5" />,
       label: "Favorites",
       path: "/favorites",
     },
