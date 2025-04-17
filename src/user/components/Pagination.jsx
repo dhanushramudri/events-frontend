@@ -7,27 +7,35 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   return (
-    <div className="flex justify-center mt-4 space-x-2  p-4 rounded-md   border-gray-300  "> 
+    <div className="flex justify-center mt-6 space-x-2 p-4 rounded-md bg-[19105b]">
+      {/* Previous Button */}
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-4 py-2 border rounded-l-md bg-gray-200 hover:bg-gray-300 border-purple-600"
+        className="px-5 py-2 bg-[19105b] text-white rounded-md hover:bg-[#4f2a7f] transition-all duration-200 disabled:bg-gray-500 cursor-pointer"
       >
         Previous
       </button>
+
+      {/* Page Number Buttons */}
       {Array.from({ length: totalPages }, (_, index) => (
         <button
           key={index}
           onClick={() => handlePageChange(index + 1)}
-          className={`px-4 py-2 border ${currentPage === index + 1 ? "bg-blue-500 text-black" : "bg-gray-200 hover:bg-gray-300 "}`}
+          className={`px-5 py-2 border-2 rounded-md text-white 
+            ${currentPage === index + 1 
+              ? "bg-blue-600 hover:bg-blue-700"
+              : "bg-[19105b] hover:bg-[#4f2a7f]"}`}
         >
           {index + 1}
         </button>
       ))}
+
+      {/* Next Button */}
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 border rounded-r-md bg-gray-200 hover:bg-gray-300 border-purple-600"
+        className="px-5 py-2 bg-[19105b] text-white rounded-md hover:bg-[#4f2a7f] transition-all duration-200 disabled:bg-gray-500 cursor-pointer"
       >
         Next
       </button>

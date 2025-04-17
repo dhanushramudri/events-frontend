@@ -114,12 +114,6 @@ const Login = ({ onSwitch }) => {
                 <label className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <a
-                  href="#"
-                  className="text-sm text-purple-600 hover:text-purple-800"
-                >
-                  Forgot password?
-                </a>
               </div>
               <input
                 type="password"
@@ -130,20 +124,6 @@ const Login = ({ onSwitch }) => {
                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-purple-500 focus:bg-white focus:outline-none transition duration-150"
                 required
               />
-            </div>
-
-            <div className="flex items-center mb-6">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                Remember me
-              </label>
             </div>
 
             <Button variant="gradient" width="full" type="submit">

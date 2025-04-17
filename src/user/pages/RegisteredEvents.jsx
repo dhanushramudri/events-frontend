@@ -16,9 +16,8 @@ const RegisteredEvents = () => {
         console.log("userData", userData);
 
         // Assuming registeredEvents is an array of event IDs
-        // console.log("userData.registeredEvents", userData.user.registeredEvents);
         if (userData.user.registeredEvents && userData.user.registeredEvents.length > 0) {
-            console.log("userData.registeredEvents", userData.registeredEvents);
+          console.log("userData.registeredEvents", userData.registeredEvents);
           const eventsPromises = userData.user.registeredEvents?.map(eventId =>
             axios.get(`${API_URL}/events/${eventId}`)
           );
@@ -40,7 +39,21 @@ const RegisteredEvents = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <h1 className='text-2xl font-semibold mb-4'>Registered Events</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Skeleton Loader */}
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="p-4 border rounded-lg shadow-lg bg-gray-200 animate-pulse">
+              <div className="h-40 bg-gray-300 mb-4 rounded-lg"></div>
+              <div className="h-6 bg-gray-300 mb-2 rounded"></div>
+              <div className="h-4 bg-gray-300 rounded"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {

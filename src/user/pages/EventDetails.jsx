@@ -1,4 +1,3 @@
-// EventDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -8,8 +7,6 @@ import {
   MapPin,
   Tag,
   Loader2,
-  Clock,
-  Heart,
 } from "lucide-react";
 import {
   Card,
@@ -23,16 +20,17 @@ import { formatDateTime } from "../../admin/utils/cn";
 import { API_URL } from "../../admin/config/constants";
 import { Button } from "../components/ui/button";
 import { sendAutoReplyEmail } from "../../admin/utils/emailSender"; // Import email sending function
+import Countdown from "../components/Countdown"; // Import Countdown Timer
 
 const EventDetails = () => {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(null);
   const [isWithdrawn, setIsWithdrawn] = useState(false);
+  const [canWithdraw, setCanWithdraw] = useState(true); // State to manage withdrawal permission
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -43,8 +41,8 @@ const EventDetails = () => {
           return;
         }
         setEvent(res.data.event);
-        checkFavoriteStatus();
         checkRegistrationStatus();
+        checkWithdrawalEligibility(res.data.event.date); // Check if withdrawal is allowed
       } catch {
         setError("Failed to fetch event details.");
       } finally {
@@ -52,26 +50,15 @@ const EventDetails = () => {
       }
     };
 
-    const checkFavoriteStatus = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/events/favorites/check/${eventId}`,
-          { withCredentials: true }
-        );
-        setIsFavorite(res.data.isFavorite);
-      } catch (error) {
-        console.error("Error checking favorite status:", error);
-      }
-    };
     const checkRegistrationStatus = async () => {
       try {
         const res = await axios.get(`${API_URL}/user/participants`, {
           withCredentials: true,
         });
-    
+
         let registered = false;
         let foundWaitlistParticipant = false;
-    
+
         res.data.participants.forEach(participant => {
           if (participant.eventId._id === eventId) {
             if (participant.queuePosition === -1) {
@@ -84,7 +71,7 @@ const EventDetails = () => {
             }
           }
         });
-    
+
         setIsRegistered(registered);
         if (!foundWaitlistParticipant) {
           setWaitlistPosition(null); // Reset if no waitlist participant found
@@ -94,53 +81,44 @@ const EventDetails = () => {
       }
     };
 
+    const checkWithdrawalEligibility = (eventDate) => {
+      const now = new Date();
+      const eventStart = new Date(eventDate);
+      const timeDifference = eventStart - now; // time difference in milliseconds
+      const twelveHoursInMs = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+
+      // If the event is within 12 hours, disable withdrawal
+      setCanWithdraw(timeDifference > twelveHoursInMs);
+    };
+
     fetchEvent();
-  }, [eventId , isRegistered , isWithdrawn , waitlistPosition ]);
-
-  const toggleFavorite = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const endpoint = isFavorite
-      ? `${API_URL}/users/favorites/remove/${eventId}`
-      : `${API_URL}/users/favorites/add/${eventId}`;
-
-    try {
-      await axios.post(endpoint, {}, { withCredentials: true });
-      setIsFavorite(!isFavorite);
-    } catch (error) {
-      console.error("Failed to update favorite status", error);
-    }
-  };
+  }, [eventId, isRegistered, isWithdrawn, waitlistPosition]);
 
   const handleRegister = async () => {
     try {
-      // Make registration request
       await axios.post(
         `${API_URL}/events/${eventId}/register`,
         {},
         { withCredentials: true }
       );
 
-      // Fetch user details to get name and email
       const userResponse = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
       const user = userResponse.data;
-  
+
       setIsRegistered(true);
       alert("Registration successful!");
 
-            // Send confirmation email
-            try {
-              await sendAutoReplyEmail({
-                  toName: user.name, // Assuming the user object has a name property
-                  toEmail: user.email, // Assuming the user object has an email property
-                  eventName: event.title, // Event title
-              });
-              console.log('Confirmation email sent successfully!');
-          } catch (emailError) {
-              console.error('Failed to send confirmation email:', emailError);
-              alert("Failed to send confirmation email. Please check console for details.");
-          }
+      try {
+        await sendAutoReplyEmail({
+          toName: user.name,
+          toEmail: user.email,
+          eventName: event.title,
+        });
+        console.log('Confirmation email sent successfully!');
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+        alert("Failed to send confirmation email. Please check console for details.");
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       alert("Failed to register for the event. Please try again.");
@@ -154,7 +132,8 @@ const EventDetails = () => {
         {},
         { withCredentials: true }
       );
-      alert("Joined waitlist!");
+      setWaitlistPosition(event.waitlistCount + 1);
+      alert("You have been added to the waitlist!");
     } catch (error) {
       console.error("Waitlist join failed:", error);
       alert("Failed to join the waitlist. Please try again.");
@@ -162,12 +141,16 @@ const EventDetails = () => {
   };
 
   const handleWithdraw = async () => {
-    // Check if the user is already withdrawn
+    if (!canWithdraw) {
+      alert("You cannot withdraw within 12 hours of the event.");
+      return;
+    }
+
     if (waitlistPosition === -1) {
       alert("You have already withdrawn from the event.");
       return;
     }
-  
+
     try {
       await axios.post(
         `${API_URL}/events/${eventId}/withdraw`,
@@ -192,10 +175,6 @@ const EventDetails = () => {
       </div>
     );
   }
-  console.log("event", event);
-  console.log("isRegistered", isRegistered);
-  console.log("waitlistPosition", waitlistPosition);
-  
 
   if (error) {
     return (
@@ -217,7 +196,12 @@ const EventDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-2 sm:p-4">
-      <Card className="overflow-hidden border-none shadow-lg">
+      {/* Countdown Timer Above the Image */}
+      <div className="flex justify-between items-center">
+        <Countdown targetDate={event.date} />
+      </div>
+
+      <Card className="overflow-hidden ">
         <div className="relative">
           <img
             src={event.image}
@@ -225,13 +209,6 @@ const EventDetails = () => {
             className="w-full h-48 sm:h-72 md:h-80 object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/40"></div>
-
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white rounded-full p-2 shadow-lg">
-            <Heart
-              onClick={toggleFavorite}
-              className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-blue-500"}`}
-            />
-          </div>
         </div>
 
         <CardHeader className="pb-2">
@@ -255,83 +232,77 @@ const EventDetails = () => {
           <Separator className="my-4 sm:my-6" />
 
           <div className="grid grid-cols-1 gap-4">
-            <Card className="border shadow-sm">
+            {/* Event Details Card with smaller size and blue left border */}
+            <Card className="border-l-4 border-blue-500 w-80 sm:w-96 mx-auto">
               <CardHeader className="py-2 sm:py-3">
                 <CardTitle className="text-sm sm:text-base">
                   Event Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 pt-0">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+              <CardContent className="space-y-2 sm:space-y-4">
+                <div className="flex gap-2 items-center text-sm sm:text-base">
+                  <Calendar className="w-5 h-5 text-primary" />
                   <span>{formatDateTime(event.date)}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
+
+                <div className="flex gap-2 items-center text-sm sm:text-base">
+                  <MapPin className="w-5 h-5 text-primary" />
                   <span>{event.location}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Tag className="w-4 h-4" />
-                  <span>{event.category}</span>
+
+                <div className="flex gap-2 items-center text-sm sm:text-base">
+                  <Users className="w-5 h-5 text-primary" />
+                  <span>
+                    {event.participantsCount} / {event.capacity} people
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-            <Card className="border shadow-sm">
-              <CardHeader className="py-2 sm:py-3">
-                <CardTitle className="text-sm sm:text-base">
-                  Registration Info
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 pt-0">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>{`${event.capacity} participants`}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w- 4 h-4" />
-                  <span>{`Registration closes: ${formatDateTime(event.registrationClosesAt)}`}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-medium">Auto-Approve:</span>
-                  <Badge variant={event.autoApprove ? "success" : "secondary"}>
-                    {event.autoApprove ? "Yes" : "No"}
-                  </Badge>
-                </div>
-                {waitlistPosition !== null && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-base font-medium">Waitlist Position:</span>
-                    <Badge variant="secondary">{waitlistPosition}</Badge>
+
+                {event.participantsCount < event.capacity ? (
+                  <div className="flex gap-2 items-center text-sm sm:text-base">
+                    <Tag className="w-5 h-5 text-primary" />
+                    <span>{event.capacity - event.participantsCount} Vacancies Left</span>
+                  </div>
+                ) : waitlistPosition !== null ? (
+                  <div className="flex gap-2 items-center text-sm sm:text-base">
+                    <Tag className="w-5 h-5 text-primary" />
+                    <span>You are number {waitlistPosition} on the waitlist</span>
+                  </div>
+                ) : (
+                  <div className="flex gap-2 items-center text-sm sm:text-base">
+                    <Tag className="w-5 h-5 text-primary" />
+                    <span>Event is full</span>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
-
-                  <div className="flex justify-end mt-4">
-          {isRegistered ? (
-            <Button variant="outline" onClick={handleWithdraw}>
-              Withdraw
-            </Button>
-          ) : waitlistPosition !== null ? (
-            <Button variant="outline" disabled>
-              Waitlisted
-            </Button>
-          ) : isWithdrawn ? ( // Check if the user has withdrawn
-            <Button variant="outline" disabled>
-              Cannot Register (Withdrawn)
-            </Button>
-          ) : event.participantsCount >= event.capacity ? (
-            <Button onClick={handleJoinWaitlist}>
-              Join Waitlist
-            </Button>
-          ) : (
-            <Button onClick={handleRegister}>
-              Register Now
-            </Button>
-          )}
-        </div>
         </CardContent>
       </Card>
+
+      {/* Registration and Waitlist Button Below */}
+      <div className="flex justify-center">
+        {isRegistered ? (
+          <Button variant="outline" onClick={handleWithdraw} disabled={!canWithdraw}>
+            Withdraw
+          </Button>
+        ) : waitlistPosition !== null ? (
+          <Button variant="outline" disabled>
+            Waitlisted
+          </Button>
+        ) : isWithdrawn ? (
+          <Button variant="outline" disabled>
+            Cannot Register (Withdrawn)
+          </Button>
+        ) : event.participantsCount >= event.capacity ? (
+          <Button onClick={handleJoinWaitlist}>
+            Join Waitlist
+          </Button>
+        ) : (
+          <Button onClick={handleRegister}>
+            Register Now
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
