@@ -15,6 +15,7 @@ import {
   Save,
   X,
   Info,
+  Trash2,
 } from "lucide-react";
 import {
   Card,
@@ -28,6 +29,8 @@ import { Badge } from "../components/ui/badge";
 import { Separator } from "../components/ui/separator";
 import { formatDateTime } from "../utils/cn";
 import { API_URL } from "../config/constants";
+import {handleError,handleSuccess} from "../../user/utils/toast";
+import toast from "react-hot-toast"
 
 const EditableTextField = ({
   label,
@@ -251,6 +254,22 @@ const EventDetails = () => {
     fetchEvent();
   }, [eventId]);
 
+
+  const handleDeleteEvent = async () => {
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      try {
+        await axios.delete(`${API_URL}/events/admin/events/${eventId}`, {
+          withCredentials: true,
+        });
+        alert("Event deleted successfully.");
+        window.location.href = "/events"; // Redirect to events list
+      } catch (err) {
+        console.error("Failed to delete event", err);
+        alert("Failed to delete event. Please try again.");
+      }
+    }
+  };
+
   const toggleFavorite = async () => {
     try {
       const endpoint = isFavorite
@@ -272,34 +291,55 @@ const EventDetails = () => {
     setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
   }, []);
 
-  const saveField = async (field) => {
-    try {
-      let payload = { [field]: editValues[field] };
+  // Create a clean axios instance for Cloudinary
+const cloudinaryAxios = axios.create({
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+});
+ 
+// Delete any authorization header
+delete cloudinaryAxios.defaults.headers.common['Authorization'];
 
-      if (field === "image" && newImage) {
-        const formData = new FormData();
-        formData.append("file", newImage);
-        formData.append("upload_preset", "ml_default");
-        const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/dubsim13p/image/upload",
-          formData
-        );
-        payload.image = res.data.secure_url;
-      }
-
-      await axios.put(`${API_URL}/events/admin/events/${eventId}`, payload, {
-        withCredentials: true,
-      });
-
-      const updated = await axios.get(`${API_URL}/events/${eventId}`);
-      setEvent(updated.data.event);
-      setEditValues(updated.data.event);
-      toggleEdit(field);
-      setNewImage(null);
-    } catch (err) {
-      console.error("Failed to save field", err);
+const saveField = async (field) => {
+  try {
+    let payload = { [field]: editValues[field] };
+ 
+    if (field === "image" && newImage) {
+      const formData = new FormData();
+      formData.append("file", newImage);
+      formData.append("upload_preset", "ml_default"); // Make sure this is correct
+      
+      // Use the clean axios instance
+      const res = await cloudinaryAxios.post(
+        "https://api.cloudinary.com/v1_1/dubsim13p/image/upload",
+        formData
+      );
+      
+      payload.image = res.data.secure_url;
     }
-  };
+ 
+    // Your existing code for saving to your API
+    await axios.put(`${API_URL}/events/admin/events/${eventId}`, payload, {
+      withCredentials: true,
+    });
+ 
+    const updated = await axios.get(`${API_URL}/events/${eventId}`);
+    if (!updated.data.event) {
+      toast.error("Event not found.");
+      return;
+    }
+    toast.success("Event updated successfully.");
+
+    setEvent(updated.data.event);
+    setEditValues(updated.data.event);
+    toggleEdit(field);
+    setNewImage(null);
+  } catch (err) {
+    console.error("Failed to save field", err);
+  }
+};
+ 
 
   if (loading) {
     return (
@@ -484,6 +524,14 @@ const EventDetails = () => {
                   onToggle={toggleEdit}
                 />
               </CardContent>
+              <Button
+          variant="destructive"
+          className="w-full"
+          onClick={handleDeleteEvent}
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete Event
+        </Button>
             </Card>
           </div>
         </CardContent>
