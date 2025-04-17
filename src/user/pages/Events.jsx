@@ -30,7 +30,7 @@ const Events = () => {
       try {
         setLoading(true);
         const [eventsRes, favoritesRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/events"),
+          axios.get( `${API_URL}/events `),
           axios.get(`${API_URL}/events/favorites`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
