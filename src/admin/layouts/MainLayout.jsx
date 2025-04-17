@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  Heart,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
@@ -55,14 +56,14 @@ const MainLayout = () => {
       label: "Events",
       path: "/events",
     },
-    {
-      icon: <BarChart2 className="h-5 w-5" />,
-      label: "Analytics",
-      path: "/analytics",
-    },
+    // {
+    //   icon: <BarChart2 className="h-5 w-5" />,
+    //   label: "Analytics",
+    //   path: "/analytics",
+    // },
     { icon: <Users className="h-5 w-5" />, label: "Users", path: "/users" },
     {
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Heart className="h-5 w-5" />,
       label: "Favorites",
       path: "/favorites",
     },
@@ -144,9 +145,9 @@ const MainLayout = () => {
             {/* Collapse/Expand Button - Moved here */}
             <div className="absolute top-16 right-[-30px] mt-4 mr-4">
               <Button
-                variant="ghost"
+                variant="white"
                 size={sidebarOpen ? "icon" : "md"} // Use "icon" for small size when sidebar is open, "md" otherwise
-                className={`bg-blue-100 border-t border-l border-b border-blue-600 text-blue-800 hover:bg-blue-200 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1)] p-0`} // Set padding to 0
+                className={`bg-purple-50 py-3 px-3 border-t border-l border-b border-blue-600 text-blue-800 hover:bg-blue-200 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1)] p-2 border-none rounded-md`} // Set padding to 0
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 {sidebarOpen ? (

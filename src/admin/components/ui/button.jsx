@@ -14,7 +14,7 @@ const buttonVariants = cva(
         ghost: "text-gray-700 hover:bg-gray-100 hover:text-gray-900 shadow-[inset_-1px_1px_1px_rgba(0,0,0,0.1),0px 2px 0px rgba(0, 0, 0, 0.1),0px -2px 0px rgba(0, 0, 0, 0.1)]",
         link: "text-blue-600 underline-offset-4 hover:underline",
         gradient: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-md",
-        white: "bg-white text-gray-800 hover:bg-gray-50 shadow-sm border border-gray-200",
+        white: "bg-white text-gray-800 hover:bg-gray-50 shadow-sm border border-gray-200 p-2",
         tab: "border-b-2 border-transparent border-blue- hover:border-blue-500 hover:text-blue-600",
         "tab-active": "border-b-2 border-blue-600 text-blue-600 font-semibold",
       },

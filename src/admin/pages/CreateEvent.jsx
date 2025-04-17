@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
 } from "../components/ui/select";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { API_URL } from "../config/constants";
 
 const CreateEvent = () => {
@@ -92,7 +92,8 @@ const CreateEvent = () => {
 
       const payload = {
         ...eventData,
-        image: imageUrl, // attach the uploaded image URL to the payload
+        image: imageUrl,
+        status: "upcoming",
       };
 
       // Send the event creation request
@@ -160,6 +161,7 @@ const CreateEvent = () => {
               value={eventData.registrationClosesAt}
               onChange={handleChange}
               required
+              max={eventData.date||undefined  } // Ensure registration closes before the event date
             />
           </div>
         </div>
@@ -210,25 +212,7 @@ const CreateEvent = () => {
             </Select>
           </div>
 
-          <div className="w-1/2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={eventData.status}
-              onValueChange={(value) =>
-                setEventData({ ...eventData, status: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="upcoming">Upcoming</SelectItem>
-                <SelectItem value="ongoing">Ongoing</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+         
         </div>
 
         <div>

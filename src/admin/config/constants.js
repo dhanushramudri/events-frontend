@@ -1,5 +1,5 @@
 // config/constants.js
-export const API_URL ="https://events-backend-coral.vercel.app/api";
+export const API_URL ="http://localhost:5000/api"; 
 
 export const EVENT_CATEGORIES = [
   "Conference",

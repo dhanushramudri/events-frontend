@@ -15,6 +15,7 @@ import {
   Save,
   X,
   Info,
+  Trash2,
 } from "lucide-react";
 import {
   Card,
@@ -251,6 +252,22 @@ const EventDetails = () => {
     fetchEvent();
   }, [eventId]);
 
+
+  const handleDeleteEvent = async () => {
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      try {
+        await axios.delete(`${API_URL}/events/admin/events/${eventId}`, {
+          withCredentials: true,
+        });
+        alert("Event deleted successfully.");
+        window.location.href = "/events"; // Redirect to events list
+      } catch (err) {
+        console.error("Failed to delete event", err);
+        alert("Failed to delete event. Please try again.");
+      }
+    }
+  };
+
   const toggleFavorite = async () => {
     try {
       const endpoint = isFavorite
@@ -484,6 +501,14 @@ const EventDetails = () => {
                   onToggle={toggleEdit}
                 />
               </CardContent>
+              <Button
+          variant="destructive"
+          className="w-full"
+          onClick={handleDeleteEvent}
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete Event
+        </Button>
             </Card>
           </div>
         </CardContent>
