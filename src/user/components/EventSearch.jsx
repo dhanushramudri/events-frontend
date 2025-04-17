@@ -1,5 +1,5 @@
 import React from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "../../admin/components/ui/input";
 
 const EventSearch = ({ filter, setFilter }) => {
@@ -17,8 +17,16 @@ const EventSearch = ({ filter, setFilter }) => {
               searchQuery: e.target.value,
             }))
           }
-          className="pl-10"
+          className="pl-10 pr-3 py-2 rounded-lg border border-[#19105b] focus:ring-2 focus:ring-[#19105b] focus:outline-none transition-all"
         />
+        {filter.searchQuery && (
+          <button
+            onClick={() => setFilter((prev) => ({ ...prev, searchQuery: "" }))}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#19105b] hover:text-[#4f2a7f] cursor-pointer"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
     </div>
   );

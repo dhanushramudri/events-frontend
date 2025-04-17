@@ -9,10 +9,10 @@ import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import AuthForm from "../admin/pages/AuthForm";
 import { AuthProvider, useAuth } from "../admin/contexts/AuthContext";
-import Favorites from "../admin/pages/Favorites";
+import Favorites from "./pages/Favorites";
 import UserMainLayout from "./layout/UserMainLayout";
 import RegisteredEvents from "./pages/RegisteredEvents";
-import UserProfile from "../admin/pages/UserProfile";
+import Profile from "../user/pages/Profile";
 import ContactAdmin from "./pages/ContactAdmin";
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -86,7 +86,7 @@ function AppAdmin() {
               <Route path="events/:eventId" element={<EventDetails />} />
               <Route path="favorites" element={<Favorites />} />
               <Route path="registeredEvents" element={<RegisteredEvents />} />
-              <Route path="/profile" element={<UserProfile/>} />
+              <Route path="/profile" element={<Profile/>} />
               <Route path="/contact-admin" element={<ContactAdmin/>}/>
             </>
           )}

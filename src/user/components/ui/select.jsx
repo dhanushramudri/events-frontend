@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { cn } from "../../lib/utils"; // Utility to combine classes, replace or remove if not using
+import { cn } from "../../utils/cn"; // Utility to combine classes, replace or remove if not using
 
 export const Select = SelectPrimitive.Root;
 
