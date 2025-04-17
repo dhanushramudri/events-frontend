@@ -7,14 +7,13 @@ import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import axios from "axios";
 import { API_URL } from "../../admin/config/constants";
-import { ToastContainer, toast } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+import { ToastContainer, toast } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
 
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    // Check if event is favorited by current user
     const checkFavoriteStatus = async () => {
       try {
         const response = await axios.get(
@@ -31,7 +30,7 @@ const EventCard = ({ event }) => {
   }, [event._id]);
 
   const toggleFavorite = async (e) => {
-    e.preventDefault(); // Prevent card navigation
+    e.preventDefault();
     e.stopPropagation();
 
     try {
@@ -41,11 +40,7 @@ const EventCard = ({ event }) => {
 
       await axios.post(endpoint, {}, { withCredentials: true });
       setIsFavorite(!isFavorite);
-      
-      // Show toast notification
-      toast.success(
-        `Event ${isFavorite ? "removed from" : "added to"} favorites`
-      );
+      toast.success(`Event ${isFavorite ? "removed from" : "added to"} favorites`);
     } catch (err) {
       console.error("Failed to update favorite status", err);
       toast.error("Failed to update favorite status");
@@ -67,9 +62,7 @@ const EventCard = ({ event }) => {
     }
   };
 
-  const imageUrl =
-    event.image ||
-    `https://random-image-pepebigotes.vercel.app/api/random-image`;
+  const imageUrl = event.image || `https://random-image-pepebigotes.vercel.app/api/random-image`;
 
   const capacityPercentage = event.capacity
     ? Math.round((event.participantsCount / event.capacity) * 100)
@@ -79,7 +72,7 @@ const EventCard = ({ event }) => {
   const isFull = event.capacity && event.participantsCount >= event.capacity;
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg w-120">
+    <Card className="overflow-hidden hover:shadow-lg w-full sm:w-80 md:w-96 lg:w-100">
       <div className="relative">
         <img
           src={imageUrl}
@@ -89,6 +82,7 @@ const EventCard = ({ event }) => {
         <button
           onClick={toggleFavorite}
           className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200 transition-all cursor-pointer"
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
           {isFavorite ? (
             <Heart className="w-5 h-5 fill-red-500 text-red-500" />
@@ -100,9 +94,7 @@ const EventCard = ({ event }) => {
       <CardHeader className="px-4 py-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl font-semibold text-gray-800">{event.title}</CardTitle>
-          <span
-            className={`${getStatusColor(event.status)} px-3 py-1 rounded-full text-xs font-medium`}
-          >
+          <span className ={`${getStatusColor(event.status)} px-3 py-1 rounded-full text-xs font-medium`}>
             {event.status}
           </span>
         </div>
@@ -175,7 +167,7 @@ const EventCard = ({ event }) => {
           </button>
         </Link>
       </CardFooter>
-      <ToastContainer /> {/* Add ToastContainer here */}
+      <ToastContainer />
     </Card>
   );
 };

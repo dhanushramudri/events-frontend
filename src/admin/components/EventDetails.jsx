@@ -298,9 +298,13 @@ const EventDetails = () => {
         formData.append("file", newImage);
         formData.append("upload_preset", "your_upload_preset");
         const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/your_cloud_name/image/upload",
+          `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
           formData
         );
+
+        console.log("res is", res.data);
         payload.image = res.data.secure_url;
       }
 
