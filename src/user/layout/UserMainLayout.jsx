@@ -83,7 +83,7 @@ const UserMainLayout = () => {
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="flex items-center px-3 py-2 border-2 border-[#19105b] text-[#19105b] hover:bg-[#19105b] hover:text-white transition-all"
+                className="flex items-center px-3 py-2 border-2 border-[#19105b] text-[#19105b] hover:bg-[#19105b] hover:text-white transition-all cursor-pointer"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 <span className="text-sm">Logout</span>

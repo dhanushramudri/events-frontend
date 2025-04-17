@@ -7,6 +7,8 @@ import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import axios from "axios";
 import { API_URL } from "../../admin/config/constants";
+import { ToastContainer, toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import toast styles
 
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -20,9 +22,6 @@ const EventCard = ({ event }) => {
           { withCredentials: true }
         );
         setIsFavorite(response.data.isFavorite);
-        toast.success(
-          `Event ${response.data.isFavorite ? "added to" : "removed from"} favorites`
-        );
       } catch (err) {
         console.error("Failed to check favorite status", err);
       }
@@ -42,11 +41,14 @@ const EventCard = ({ event }) => {
 
       await axios.post(endpoint, {}, { withCredentials: true });
       setIsFavorite(!isFavorite);
-      // toast.success(
-      //   `Event ${isFavorite ? "removed from" : "added to"} favorites`
-      // );
+      
+      // Show toast notification
+      toast.success(
+        `Event ${isFavorite ? "removed from" : "added to"} favorites`
+      );
     } catch (err) {
       console.error("Failed to update favorite status", err);
+      toast.error("Failed to update favorite status");
     }
   };
 
@@ -77,7 +79,7 @@ const EventCard = ({ event }) => {
   const isFull = event.capacity && event.participantsCount >= event.capacity;
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg w-100">
+    <Card className="overflow-hidden hover:shadow-lg w-120">
       <div className="relative">
         <img
           src={imageUrl}
@@ -173,6 +175,7 @@ const EventCard = ({ event }) => {
           </button>
         </Link>
       </CardFooter>
+      <ToastContainer /> {/* Add ToastContainer here */}
     </Card>
   );
 };

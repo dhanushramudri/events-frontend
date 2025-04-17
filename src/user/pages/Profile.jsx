@@ -3,6 +3,9 @@ import axios from "axios";
 import { API_URL } from "../../admin/config/constants";
 import { Button } from "../components/ui/button";
 
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/toast";
+
 const Profile = () => {
   const [user, setUser] = useState({
     name: "",
@@ -44,11 +47,13 @@ const Profile = () => {
       await axios.put(`${API_URL}/users/profile`, user, {
         withCredentials: true
       });
-      alert("Profile updated successfully!");
+      // alert("Profile updated successfully!");
+      handleSuccess("Profile updated successfully!");
       window.location.reload(); // Reload the page to reflect changes
       setIsEditing(false);
     } catch (err) {
-      setError("Failed to update profile.");
+      // setError("Failed to update profile.");
+      handleError("Failed to update profile.");
     }
   };
 
@@ -68,6 +73,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
+      <ToastContainer />
       <h2 className="text-xl font-bold mb-4">User Profile</h2>
 
       <form onSubmit={handleSubmit}>

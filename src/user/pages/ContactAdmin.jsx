@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Button } from '../components/ui/button';
 import { API_URL } from '../../admin/config/constants';
 
+import { ToastContainer } from 'react-toastify';
+import { handleError, handleSuccess } from '../utils/toast';
+
 const ContactAdmin = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -21,15 +24,18 @@ const ContactAdmin = () => {
       }, { withCredentials: true });
 
       setSuccess(response.data.message);
+      handleSuccess("Message sent successfully!");
       setSubject('');
       setMessage('');
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      handleError("Failed to send message. Please try again.");
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded shadow-md">
+      <ToastContainer />
       <h2 className="text-lg font-semibold mb-4">Contact Admin</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       {success && <div className="text-green-500 mb-4">{success}</div>}
