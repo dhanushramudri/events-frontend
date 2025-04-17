@@ -56,11 +56,11 @@ const MainLayout = () => {
       label: "Events",
       path: "/events",
     },
-    {
-      icon: <BarChart2 className="h-5 w-5" />,
-      label: "Analytics",
-      path: "/analytics",
-    },
+    // {
+    //   icon: <BarChart2 className="h-5 w-5" />,
+    //   label: "Analytics",
+    //   path: "/analytics",
+    // },
     { icon: <Users className="h-5 w-5" />, label: "Users", path: "/users" },
     {
       icon: <Heart className="h-5 w-5" />,
