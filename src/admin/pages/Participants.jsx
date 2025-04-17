@@ -20,7 +20,7 @@ import {
   Filter,
   Users,
 } from "lucide-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast"; 
 import { API_URL } from "../config/constants";
 import { useParams, Link } from "react-router-dom";
 

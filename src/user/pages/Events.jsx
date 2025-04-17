@@ -128,7 +128,7 @@ const Events = () => {
       )}
 
       {/* Events Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w:xl" >
         {currentEvents.map((event) => (
           <EventCard key={event.id} event={event} isFavorite={favorites.includes(event.id)} />
         ))}

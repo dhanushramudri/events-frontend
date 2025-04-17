@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast"; // Using react-hot-toast instead of Chakra UI
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Button } from "../components/ui/button";
@@ -12,14 +13,12 @@ import {
   SelectContent,
   SelectItem,
 } from "../components/ui/select";
-import { toast, ToastContainer } from "react-toastify";
 import { API_URL } from "../config/constants";
-
+ 
 const CreateEvent = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
-
   const [eventData, setEventData] = useState({
     title: "",
     description: "",
@@ -32,7 +31,7 @@ const CreateEvent = () => {
     capacity: 0,
     autoApprove: false,
   });
-
+ 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setEventData({
@@ -40,21 +39,20 @@ const CreateEvent = () => {
       [name]: type === "checkbox" ? checked : value,
     });
   };
-
-  // Upload image to Cloudinary and return the image URL
+ 
   const handleImageUpload = async () => {
     if (!imageFile) return "";
-
+    
     const formData = new FormData();
     formData.append("file", imageFile);
     formData.append(
       "upload_preset",
       import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
     );
-
+    
     try {
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${
+`https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/image/upload`,
         {
@@ -62,58 +60,59 @@ const CreateEvent = () => {
           body: formData,
         }
       );
-      console.log("Cloudinary response:", res);
-
+      
       if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Cloudinary error response:", errorData);
         throw new Error("Cloudinary upload failed");
       }
-
+      
       const data = await res.json();
-      console.log("Image uploaded:", data.secure_url);
       return data.secure_url;
     } catch (err) {
       console.error("Image upload failed:", err);
-      toast.error("Image upload failed");
+      toast.error("Image upload failed. Please try again.");
       return "";
     }
   };
-
-  // Handle the form submission
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    
+    // Create a loading toast that will be dismissed on success or error
+    const toastId = toast.loading("Creating event...");
+    
     try {
-      // Upload the image first
       const imageUrl = await handleImageUpload();
-      console.log("Image URL:", imageUrl);
-
+      
       const payload = {
         ...eventData,
         image: imageUrl,
         status: "upcoming",
       };
-
-      // Send the event creation request
-      await axios.post(`${API_URL}/events/admin/events`, payload, {
+      
+await axios.post(`${API_URL}/events/admin/events`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         withCredentials: true,
       });
-
+      
+      // Dismiss the loading toast and show success toast
+      toast.dismiss(toastId);
       toast.success("Event created successfully!");
+      
       navigate("/events");
     } catch (error) {
       console.error("Error creating event:", error);
+      
+      // Dismiss the loading toast and show error toast
+      toast.dismiss(toastId);
       toast.error("Failed to create event. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
+ 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg space-y-6">
       <h1 className="text-3xl font-bold text-center">Create New Event</h1>
@@ -128,7 +127,7 @@ const CreateEvent = () => {
             required
           />
         </div>
-
+        
         <div>
           <Label htmlFor="description">Description</Label>
           <Textarea
@@ -139,7 +138,7 @@ const CreateEvent = () => {
             required
           />
         </div>
-
+        
         <div className="flex gap-4">
           <div className="w-1/2">
             <Label htmlFor="date">Event Date</Label>
@@ -147,13 +146,15 @@ const CreateEvent = () => {
               type="date"
               id="date"
               name="date"
-              value={eventData.date}
+value={eventData.date}
               onChange={handleChange}
               required
             />
           </div>
           <div className="w-1/2">
-            <Label htmlFor="registrationClosesAt">Registration Closes At</Label>
+            <Label htmlFor="registrationClosesAt">
+              Registration Closes At
+            </Label>
             <Input
               type="date"
               id="registrationClosesAt"
@@ -161,11 +162,11 @@ const CreateEvent = () => {
               value={eventData.registrationClosesAt}
               onChange={handleChange}
               required
-              max={eventData.date||undefined  } // Ensure registration closes before the event date
+max={eventData.date || undefined}
             />
           </div>
         </div>
-
+        
         <div className="flex gap-4">
           <div className="w-1/2">
             <Label htmlFor="location">Location</Label>
@@ -177,7 +178,6 @@ const CreateEvent = () => {
               required
             />
           </div>
-
           <div className="w-1/2">
             <Label htmlFor="capacity">Capacity</Label>
             <Input
@@ -190,7 +190,7 @@ const CreateEvent = () => {
             />
           </div>
         </div>
-
+        
         <div className="flex gap-4">
           <div className="w-1/2">
             <Label htmlFor="category">Category</Label>
@@ -211,37 +211,56 @@ const CreateEvent = () => {
               </SelectContent>
             </Select>
           </div>
-
-         
+          <div className="w-1/2">
+            <Label htmlFor="time">Time</Label>
+            <Input
+              type="time"
+              id="time"
+              name="time"
+              value={eventData.time}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
-
+        
         <div>
-          <Label htmlFor="autoApprove" className="flex items-center gap-2">
+          <Label
+            htmlFor="autoApprove"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <input
               type="checkbox"
+              id="autoApprove"
               name="autoApprove"
               checked={eventData.autoApprove}
               onChange={handleChange}
+              className="w-4 h-4"
             />
-            Auto-approve participants
+            <span>Auto-approve participants</span>
           </Label>
         </div>
-
+        
         <div>
           <Label htmlFor="image">Upload Banner Image</Label>
           <Input
             type="file"
+            id="image"
             accept="image/*"
             onChange={(e) => setImageFile(e.target.files[0])}
           />
         </div>
-
-        <Button type="submit" disabled={loading} className="w-full">
+        
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full"
+        >
           {loading ? "Creating..." : "Create Event"}
         </Button>
       </form>
     </div>
   );
 };
-
+ 
 export default CreateEvent;
