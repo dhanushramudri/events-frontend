@@ -132,6 +132,9 @@ const Dashboard = () => {
       throw error;
     }
   };
+ 
+  console.log(popularEvent, "popularEvent"); // Debugging line
+  console.log("popularEvent", popularEvent); // Debugging line
 
   console.log("popularEvent", popularEvent); // Debugging line
 
@@ -364,15 +367,7 @@ const Dashboard = () => {
                     <p className="text-sm text-gray-500">
                       Capacity: {popularEvent.capacity}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      Capacity Usage:{" "}
-                      {Math.round(
-                        (popularEvent.participants?.length /
-                          popularEvent.capacity) *
-                          100
-                      )}
-                      %
-                    </p>
+                   
                   </div>
                 </div>
               </CardContent>
