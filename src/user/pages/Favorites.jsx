@@ -30,7 +30,7 @@ const Favorites = () => {
       <h2 className="text-2xl font-semibold mb-4">My Favorite Events</h2>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Tailwind CSS Skeleton Loader */}
           {[...Array(6)].map((_, index) => (
             <div
@@ -49,7 +49,7 @@ const Favorites = () => {
           No favorite events found.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {favorites.map((event) => (
             <EventCard key={event._id} event={event} />
           ))}

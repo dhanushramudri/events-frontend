@@ -122,7 +122,7 @@ const EventDetails = () => {
       } catch (emailError) {
         console.error('Failed to send confirmation email:', emailError);
         // alert("Failed to send confirmation email. Please check console for details.");
-        handleError("Failed to send confirmation email. Please check console for details.");
+        // handleError("Failed to send confirmation email. Please check console for details.");
       }
     } catch (error) {
       console.error("Registration failed:", error);

@@ -23,7 +23,7 @@ const Events = () => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false); // Toggle for filter display
-  const eventsPerPage = 4;
+  const eventsPerPage = 3;
   
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +89,7 @@ const Events = () => {
         </div>
 
         {/* Skeleton for Event Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[...Array(6)].map((_, index) => (
             <div key={index} className="w-full bg-gray-200 h-56 animate-pulse rounded-lg"></div>
           ))}
@@ -122,14 +122,14 @@ const Events = () => {
 
       {/* Only show filters when 'showFilters' is true */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           <EventSearch filter={filter} setFilter={setFilter} />
           <EventFilters filter={filter} setFilter={setFilter} />
         </div>
       )}
 
       {/* Events Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 " >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 " >
         {currentEvents.map((event) => (
           <EventCard key={event.id} event={event} isFavorite={favorites.includes(event.id)} />
         ))}
