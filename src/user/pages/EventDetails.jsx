@@ -248,7 +248,7 @@ const EventDetails = () => {
             {/* Event Details Card with smaller size and blue left border */}
             <Card className="border-l-4 border-blue-500 w-80 sm:w-96 mx-auto">
               <CardHeader className="py-2 sm:py-3">
-                <CardTitle className="text-sm sm:text-base">
+                <CardTitle className="text-lg sm:text-base">
                   Event Details
                 </CardTitle>
               </CardHeader>

@@ -23,9 +23,9 @@ const EventCard = ({ event }) => {
           { withCredentials: true }
         );
         setIsFavorite(response.data.isFavorite);
-        toast.success(
-          `Event ${response.data.isFavorite ? "added to" : "removed from"} favorites`
-        );
+        // toast.success(
+        //   `Event ${response.data.isFavorite ? "added to" : "removed from"} favorites`
+        // );
       } catch (err) {
         console.error("Failed to check favorite status", err);
       }
