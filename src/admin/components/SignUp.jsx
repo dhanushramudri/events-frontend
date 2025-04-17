@@ -5,6 +5,7 @@ import { API_URL } from "../config/constants";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../../user/utils/toast";
 
 const SignUp = ({ onSwitch }) => {
   const { setCurrentUser  } = useAuth(); // Get setCurrentUser  from context
@@ -47,15 +48,18 @@ const SignUp = ({ onSwitch }) => {
         setCurrentUser (result.user);
         
         // Redirect to the home page or dashboard
-        toast.success("Registration successful!");
+        handleSuccess("Registration successful!");
         navigate('/login');
       } else {
         // Handle registration failure
         console.error("Registration failed:", result.message || "Unknown error");
         // You might want to show an error message to the user here
+        handleError("Registration failed. Please try again.");
       }
     } catch (error) {
       console.error("Signup error:", error);
+      // Handle network or other errors
+      handleError("An error occurred. Please try again later.");
     }
   };
 
@@ -67,7 +71,7 @@ const SignUp = ({ onSwitch }) => {
         <div className="max-w-md mx-auto w-full">
           <button
             onClick={onSwitch}
-            className="text-sm text-gray-600 hover:text-gray-800 flex items-center"
+            className="text-sm text-gray-600 hover:text-gray-800 flex items-center cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +144,7 @@ const SignUp = ({ onSwitch }) => {
               </p>
             </div>
 
-            <Button variant="gradient" width="full" type="submit">
+            <Button variant="gradient" width="full" type="submit" className="cursor-pointer">
               Create account
             </Button>
           </form>

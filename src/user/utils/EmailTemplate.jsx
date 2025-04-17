@@ -3,18 +3,18 @@ import React from 'react';
 
 const EmailTemplate = ({ toName, eventName }) => {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', backgroundColor: '#f4f4f4' }}>
-      <h2 style={{ color: '#333', textAlign: 'center' }}>Registration Confirmation</h2>
-      <p style={{ fontSize: '16px', color: '#555' }}>
+    <div className="font-sans p-5 bg-gray-100">
+      <h2 className="text-gray-800 text-center text-2xl">Registration Confirmation</h2>
+      <p className="text-gray-600 text-base">
         Dear {toName},
       </p>
-      <p style={{ fontSize: '16px', color: '#555' }}>
+      <p className="text-gray-600 text-base">
         You have successfully registered for the event: <strong>{eventName}</strong>.
       </p>
-      <p style={{ fontSize: '16px', color: '#555' }}>
+      <p className="text-gray-600 text-base">
         We look forward to seeing you there!
       </p>
-      <p style={{ fontSize: '14px', color: '#777', marginTop: '30px' }}>
+      <p className="text-gray-500 text-sm mt-8">
         Best regards,<br />
         The Event Team
       </p>
@@ -23,4 +23,3 @@ const EmailTemplate = ({ toName, eventName }) => {
 };
 
 export default EmailTemplate;
-

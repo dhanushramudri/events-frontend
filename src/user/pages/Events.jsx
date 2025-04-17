@@ -5,13 +5,16 @@ import EventCard from "../components/EventCard";
 import EventFilters from "../components/EventFilters";
 import EventSearch from "../components/EventSearch";
 import Pagination from "../components/Pagination";
-import { Filter } from "lucide-react"; // Import the filter icon
+import { Filter } from "lucide-react"; 
+
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/toast";
 
 const Events = () => {
   const [allEvents, setAllEvents] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); 
   const [filter, setFilter] = useState({
     category: "all",
     status: "upcoming",
@@ -21,7 +24,7 @@ const Events = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false); // Toggle for filter display
   const eventsPerPage = 4;
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -38,7 +41,7 @@ const Events = () => {
         setAllEvents(eventsRes.data.events || []);
         setFavorites(favoritesRes.data.favorites || []);
       } catch (err) {
-        setError("Failed to load data. Please try again later.");
+        handleError("Failed to load data. Please try again later.");
         console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
@@ -47,7 +50,7 @@ const Events = () => {
     fetchData();
   }, []);
 
-  // Filter logic (without date filter)
+  // Filter logic
   const filteredEvents = useMemo(() => {
     return allEvents
       .filter((event) => {

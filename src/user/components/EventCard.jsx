@@ -8,6 +8,9 @@ import { Progress } from "./ui/progress";
 import axios from "axios";
 import { API_URL } from "../../admin/config/constants";
 
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../utils/toast";
+
 const EventCard = ({ event }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -29,7 +32,7 @@ const EventCard = ({ event }) => {
     };
 
     checkFavoriteStatus();
-  }, [event._id]);
+  }, [event._id]);  
 
   const toggleFavorite = async (e) => {
     e.preventDefault(); // Prevent card navigation
@@ -45,8 +48,15 @@ const EventCard = ({ event }) => {
       // toast.success(
       //   `Event ${isFavorite ? "removed from" : "added to"} favorites`
       // );
+      if (isFavorite) {
+        handleSuccess("Event removed from favorites");
+      }
+      else {
+        handleSuccess("Event added to favorites");
+      }
     } catch (err) {
       console.error("Failed to update favorite status", err);
+      handleError("Failed to update favorite status. Please try again.");
     }
   };
 
@@ -78,6 +88,7 @@ const EventCard = ({ event }) => {
 
   return (
     <Card className="overflow-hidden hover:shadow-lg w-100">
+      <ToastContainer />
       <div className="relative">
         <img
           src={imageUrl}

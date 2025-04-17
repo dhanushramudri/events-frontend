@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { API_URL } from "../config/constants";
 import { useAuth } from "../contexts/AuthContext";
 
+import { handleError, handleSuccess } from "../../user/utils/toast";
+import { ToastContainer } from "react-toastify";
+
 const Login = ({ onSwitch }) => {
   const {currentUser , setCurrentUser } = useAuth(); 
   // console.log("current user is", currentUser);
@@ -40,7 +43,12 @@ const Login = ({ onSwitch }) => {
   
       const result = await response.json();
       if (response.ok) {
-        navigate('/')
+        // Handle successful login
+        handleSuccess("Login successful!"); // Show success message
+        // navigate('/')
+        setTimeout(() => {
+          window.location.href = "/"; // Redirect to the home page or dashboard
+        }, 1000);
 
         if (result.token) {
           localStorage.setItem("token", result.token);
@@ -52,19 +60,22 @@ const Login = ({ onSwitch }) => {
   
         setCurrentUser (result.user);
         console.log("User data set in context:", currentUser);
-        window.location.href = "/"; // Redirect to the home page or dashboard
+        // window.location.href = "/"; // Redirect to the home page or dashboard
       } else {
         // Handle login failure
         console.error("Login failed:", result.message || "Unknown error");
         // You might want to show an error message to the user here
+        handleError("Login failed. Please check your credentials.");
       }
     } catch (error) {
       console.error("Login error:", error);
+      handleError("An error occurred during login. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen flex font-sans">
+      <ToastContainer />
       {/* Left side - Form */}
       <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
         <div className="max-w-md mx-auto w-full">
@@ -126,7 +137,7 @@ const Login = ({ onSwitch }) => {
               />
             </div>
 
-            <Button variant="gradient" width="full" type="submit">
+            <Button variant="gradient" width="full" type="submit" className="cursor-pointer">
               Log in
             </Button>
           </form>
